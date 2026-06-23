@@ -22,8 +22,8 @@ const GOAL_CARDS = [
 ];
 
 const LEARNING_FEATURES = [
-  { Icon: MonitorPlay, title: "Live classroom energy", text: "Interactive lectures, instant doubt clearing and focused batch attention." },
-  { Icon: ClipboardCheck, title: "Practice and revise", text: "Daily practice, topic tests, mock papers and detailed analysis." },
+  { Icon: MonitorPlay, title: "Live Interactive Sessions", text: "Interactive lectures, instant doubt clearing and focused batch attention." },
+  { Icon: ClipboardCheck, title: "Practice and Revision", text: "Daily practice, topic tests, mock papers and detailed analysis." },
   { Icon: CalendarCheck, title: "Consistent mentoring", text: "Progress tracking, counselling and parent updates through the year." },
 ];
 

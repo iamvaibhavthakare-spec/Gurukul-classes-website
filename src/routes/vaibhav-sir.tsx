@@ -14,9 +14,9 @@ export function VaibhavSirProfile() {
   return (
     <>
       <PageHero
-        title="Vaibhav Sir Profile"
+        title="Mr. Vaibhav Thakare Profile"
         subtitle="Vaibhav Thakare, founder mentor at Gurukul Science Classes."
-        crumbs={[{ label: "About Us", href: "/about" }, { label: "Vaibhav Sir" }]}
+        crumbs={[{ label: "About Us", href: "/about" }, { label: "Mr. Vaibhav Thakare" }]}
       />
 
       <section className="bg-white py-16 md:py-24">

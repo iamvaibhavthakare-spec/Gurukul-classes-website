@@ -1,37 +1,72 @@
-import { PlayCircle } from "lucide-react";
+import { Facebook, Instagram, Youtube } from "lucide-react";
+import { useState } from "react";
 import { PageHero } from "@/components/PageHero";
-import { SectionTitle } from "@/components/SectionTitle";
-import { SITE, VIDEOS } from "@/data/site";
-import heroClassroom from "@/assets/hero-classroom.jpg";
-import heroStudents from "@/assets/hero-students.jpg";
-import heroStudy from "@/assets/hero-study.jpg";
-import aboutTeaching from "@/assets/about-teaching.jpg";
-
-const COVERS = [heroClassroom, heroStudents, heroStudy, aboutTeaching];
+import { SocialEmbedModal, type SocialPlatform } from "@/components/SocialEmbedModal";
 
 export function Videos() {
+  const [platform, setPlatform] = useState<SocialPlatform | null>(null);
+
+  const socialCards = [
+    {
+      platform: "instagram" as const,
+      title: "Instagram",
+      description: "Reels, classroom moments and campus updates.",
+      Icon: Instagram,
+    },
+    {
+      platform: "facebook" as const,
+      title: "Facebook",
+      description: "Page timeline, announcements and photo updates.",
+      Icon: Facebook,
+    },
+    {
+      platform: "youtube" as const,
+      title: "YouTube",
+      description: "Channel uploads, lectures and event videos.",
+      Icon: Youtube,
+    },
+  ];
+
   return (
     <>
-      <PageHero title="Video Library" subtitle="Watch our classrooms, toppers and campus stories." crumbs={[{ label: "Videos" }]} />
-      <section className="py-16 bg-white">
+      <SocialEmbedModal
+        platform={platform}
+        onSelectPlatform={setPlatform}
+        onClose={() => setPlatform(null)}
+      />
+      <PageHero
+        title="Social Wall"
+        subtitle="Open our latest Instagram, Facebook and YouTube updates in a full-screen embed."
+        crumbs={[{ label: "Videos" }]}
+      />
+      <section className="bg-white py-16">
         <div className="container mx-auto px-4">
-          <SectionTitle eyebrow="Watch" title="Stories from Gurukul" />
-          <div className="grid sm:grid-cols-2 gap-8">
-            {VIDEOS.map((video, index) => (
-              <div key={video.title} className="group overflow-hidden rounded-2xl border border-border bg-white shadow-soft transition-all hover:-translate-y-1 hover:shadow-card">
-                <div className="relative aspect-video overflow-hidden">
-                  <img src={COVERS[index % COVERS.length]} alt={video.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
-                  <div className="absolute inset-0 bg-brand-ink/40 flex items-center justify-center">
-                    <a href={SITE.socials.youtube} target="_blank" rel="noopener noreferrer" aria-label={`Open ${video.title}`} className="flex h-16 w-16 items-center justify-center rounded-full bg-[#2563EB] shadow-card transition-transform group-hover:scale-105">
-                      <PlayCircle className="h-8 w-8 text-white" />
-                    </a>
-                  </div>
+          <div className="max-w-3xl">
+            <span className="inline-flex items-center rounded-full border border-[#2563EB]/20 bg-[#EAF1FF] px-4 py-1 text-xs font-semibold uppercase tracking-widest text-[#2563EB]">
+              Watch Us On
+            </span>
+            <h2 className="mt-4 text-3xl font-bold tracking-tight md:text-5xl">
+              Latest updates without placeholder videos
+            </h2>
+          </div>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            {socialCards.map(({ platform: socialPlatform, title, description, Icon }) => (
+              <button
+                key={title}
+                type="button"
+                onClick={() => setPlatform(socialPlatform)}
+                className="group rounded-3xl border border-border bg-[#F8FAFF] p-6 text-left shadow-soft transition-all hover:-translate-y-1 hover:border-[#2563EB]/30 hover:shadow-card"
+              >
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#EAF1FF] text-[#2563EB] transition-colors group-hover:bg-[#2563EB] group-hover:text-white">
+                  <Icon className="h-7 w-7" />
                 </div>
-                <div className="p-5">
-                  <h4 className="font-bold text-brand-ink">{video.title}</h4>
-                  <p className="mt-1 text-sm text-muted-foreground">{video.description}</p>
-                </div>
-              </div>
+                <h3 className="mt-5 text-xl font-bold text-brand-ink">{title}</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
+                <span className="mt-5 inline-flex rounded-full bg-white px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#2563EB]">
+                  Open full screen
+                </span>
+              </button>
             ))}
           </div>
         </div>

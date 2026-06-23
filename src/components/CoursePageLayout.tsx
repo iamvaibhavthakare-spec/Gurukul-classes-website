@@ -109,7 +109,11 @@ export function CoursePageLayout({ course }: { course: Course }) {
               <a href={`tel:${SITE.primaryPhoneRaw}`} className="inline-flex items-center gap-2 rounded-lg bg-[#2563EB] px-6 py-3 text-sm font-bold text-white shadow-card hover:bg-[#1D4ED8]">
                 <Phone className="h-4 w-4" /> Talk to a Counsellor
               </a>
-              <a href="#enquire" className="inline-flex items-center gap-2 rounded-lg border border-[#2563EB] px-6 py-3 text-sm font-bold text-[#2563EB] hover:bg-[#EAF1FF] transition-colors">
+              <a
+                href="/GSC_Science_Brochure_2026_CC.pdf"
+                download="GSC_Science_Brochure_2026_CC.pdf"
+                className="inline-flex items-center gap-2 rounded-lg border border-[#2563EB] px-6 py-3 text-sm font-bold text-[#2563EB] hover:bg-[#EAF1FF] transition-colors"
+              >
                 Download Brochure
               </a>
             </div>

@@ -11,6 +11,10 @@ import { BhagyashreeMadamProfile } from "@/routes/bhagyashree-madam";
 import { Career } from "@/routes/career";
 import { Contact } from "@/routes/contact";
 import { Gallery } from "@/routes/gallery";
+import { Blog } from "@/routes/blog";
+import { BlogStudyRoutineThatSticks } from "@/routes/blog.study-routine-that-sticks";
+import { BlogWeeklyTestsMatter } from "@/routes/blog.weekly-tests-matter";
+import { BlogParentSupportWithoutPressure } from "@/routes/blog.parent-support-without-pressure";
 import { PressRelease } from "@/routes/press-release";
 import { Results } from "@/routes/results";
 import { VaibhavSirProfile } from "@/routes/vaibhav-sir";
@@ -27,11 +31,15 @@ import { CourseXiiScience } from "@/routes/courses.xii-science";
 const ROUTES: Record<string, { title: string; Component: () => JSX.Element }> = {
   "/": { title: "Gurukul Science Classes - IIT-JEE, NEET, MH-CET Coaching", Component: Home },
   "/about": { title: "About Us - Gurukul Science Classes", Component: About },
-  "/vaibhav-sir": { title: "Vaibhav Sir Profile - Gurukul Science Classes", Component: VaibhavSirProfile },
-  "/bhagyashree-madam": { title: "Bhagyashree Madam Profile - Gurukul Science Classes", Component: BhagyashreeMadamProfile },
+  "/vaibhav-sir": { title: "Mr. Vaibhav Thakare Profile - Gurukul Science Classes", Component: VaibhavSirProfile },
+  "/bhagyashree-madam": { title: "Mrs. Bhagyashree Thakare Profile - Gurukul Science Classes", Component: BhagyashreeMadamProfile },
   "/career": { title: "Career - Gurukul Science Classes", Component: Career },
   "/contact": { title: "Contact - Gurukul Science Classes", Component: Contact },
   "/gallery": { title: "Gallery - Gurukul Science Classes", Component: Gallery },
+  "/blog": { title: "Blog & Insights - Gurukul Science Classes", Component: Blog },
+  "/blog/study-routine-that-sticks": { title: "How to build a study routine that actually sticks - Gurukul Science Classes", Component: BlogStudyRoutineThatSticks },
+  "/blog/weekly-tests-matter": { title: "Why weekly tests matter more than last-minute cramming - Gurukul Science Classes", Component: BlogWeeklyTestsMatter },
+  "/blog/parent-support-without-pressure": { title: "How parents can support preparation without adding pressure - Gurukul Science Classes", Component: BlogParentSupportWithoutPressure },
   "/press-release": { title: "Press & Announcements - Gurukul Science Classes", Component: PressRelease },
   "/results": { title: "Results - Gurukul Science Classes", Component: Results },
   "/videos": { title: "Videos - Gurukul Science Classes", Component: Videos },

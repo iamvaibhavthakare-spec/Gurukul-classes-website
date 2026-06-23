@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 
 const SLIDES = [
   {
-    eyebrow: "Since 1998",
+    eyebrow: "Since 2000",
     title: "IIT-JEE | Medical | Foundation Coaching",
     description: "Concept-first teaching, daily practice and real results — the Gurukul way.",
     image: heroClassroom,

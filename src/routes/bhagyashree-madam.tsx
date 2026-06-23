@@ -14,9 +14,9 @@ export function BhagyashreeMadamProfile() {
   return (
     <>
       <PageHero
-        title="Bhagyashree Madam Profile"
+        title="Mrs. Bhagyashree Thakare Profile"
         subtitle="Bhagyashree Vaibhav Thakare, Director at Gurukul Science Classes since 2006."
-        crumbs={[{ label: "About Us", href: "/about" }, { label: "Bhagyashree Madam" }]}
+        crumbs={[{ label: "About Us", href: "/about" }, { label: "Mrs. Bhagyashree Thakare" }]}
       />
 
       <section className="bg-white py-16 md:py-24">

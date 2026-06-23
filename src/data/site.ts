@@ -14,7 +14,7 @@ export const SITE = {
   socials: {
     facebook: "https://www.facebook.com/GurukulScienceClasses",
     instagram: "https://www.instagram.com/gurukulscienceclasses/",
-    youtube: "https://www.youtube.com/@gurukulscienceclass/",
+    youtube: "https://www.youtube.com/@gurukulscienceclasses1866",
   },
 };
 
@@ -269,11 +269,11 @@ export const WHY_CHOOSE = [
     text: "Seamless integration of board syllabus with Entrance preparation — no double burden.",
   },
   {
-    title: "Smart Study Material",
+    title: "Excellent Study Material",
     text: "Concept-first booklets, DPPs and chapter-wise question banks built by the academic team.",
   },
   {
-    title: "Doubt-Solving Daily",
+    title: "Doubt Solving Session",
     text: "Dedicated doubt-clearing sessions, walk-in mentoring and one-on-one academic counseling.",
   },
   {
@@ -334,12 +334,6 @@ export const PRESS = [
   { date: "Jun 2024", title: "Gurukul launches integrated Foundation programme", excerpt: "A redesigned VIII–X foundation track focused on concept building and early competitive exposure." },
 ];
 
-export const VIDEOS = [
-  { title: "A Day at Gurukul Science Classes", youtubeId: "dQw4w9WgXcQ", description: "Walk through our flagship Kalyan campus." },
-  { title: "Topper Talk — NEET 2024", youtubeId: "dQw4w9WgXcQ", description: "Our NEET toppers share their preparation strategy." },
-  { title: "JEE Advanced Problem Solving", youtubeId: "dQw4w9WgXcQ", description: "A live problem-solving session with our senior JEE faculty." },
-  { title: "Parent–Teacher Engagement", youtubeId: "dQw4w9WgXcQ", description: "How we partner with parents throughout the year." },
-];
 
 export const COURSE_OPTIONS = COURSES.map((c) => c.title);
 export const BRANCH_OPTIONS = BRANCHES.map((b) => `${b.name} — ${b.area}`);

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, Menu, Phone, X } from "lucide-react";
+import { ChevronDown, Facebook, Instagram, Menu, Phone, X, Youtube } from "lucide-react";
 import { AppLink } from "@/components/AppLink";
 import { Logo } from "./Logo";
+import { SocialEmbedModal, type SocialPlatform } from "./SocialEmbedModal";
 import { SITE } from "@/data/site";
 import { cn } from "@/lib/utils";
 
@@ -15,8 +16,8 @@ const NAV: NavItem[] = [
     label: "About Us",
     children: [
       { label: "About Gurukul", to: "/about" },
-      { label: "Vaibhav Sir Profile", to: "/vaibhav-sir" },
-      { label: "Bhagyashree Madam Profile", to: "/bhagyashree-madam" },
+      { label: "Mr. Vaibhav Thakare Profile", to: "/vaibhav-sir" },
+      { label: "Mrs. Bhagyashree Thakare Profile", to: "/bhagyashree-madam" },
     ],
   },
   {
@@ -48,6 +49,7 @@ const NAV: NavItem[] = [
       { label: "Results", to: "/results" },
       { label: "Gallery", to: "/gallery" },
       { label: "Press Release", to: "/press-release" },
+      { label: "Blog", to: "/blog" },
       { label: "Videos", to: "/videos" },
     ],
   },
@@ -55,10 +57,33 @@ const NAV: NavItem[] = [
   { label: "Contact Us", to: "/contact" },
 ];
 
+const VIDEO_SOCIAL_LINKS = [
+  {
+    label: "Instagram",
+    platform: "instagram" as const,
+    href: SITE.socials.instagram,
+    Icon: Instagram,
+  },
+  {
+    label: "Facebook",
+    platform: "facebook" as const,
+    href: SITE.socials.facebook,
+    Icon: Facebook,
+  },
+  {
+    label: "YouTube",
+    platform: "youtube" as const,
+    href: SITE.socials.youtube,
+    Icon: Youtube,
+  },
+] as const;
+
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [openMobile, setOpenMobile] = useState(false);
   const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null);
+  const [openVideoPopup, setOpenVideoPopup] = useState(false);
+  const [activeSocialPlatform, setActiveSocialPlatform] = useState<SocialPlatform | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -69,6 +94,12 @@ export function Header() {
 
   return (
     <>
+      <SocialEmbedModal
+        platform={activeSocialPlatform}
+        onSelectPlatform={setActiveSocialPlatform}
+        onClose={() => setActiveSocialPlatform(null)}
+      />
+
       {/* Top contact strip */}
       <div className="hidden md:block bg-gradient-dark text-white text-xs">
         <div className="container mx-auto flex items-center justify-between px-4 py-2">
@@ -120,14 +151,63 @@ export function Header() {
                   <div className="absolute left-0 top-full pt-2 hidden group-hover:block min-w-[220px]">
                     <div className="rounded-xl border border-border bg-white p-2 shadow-card">
                       {item.children.map((c) => (
-                        <AppLink
-                          key={c.to}
-                          to={c.to}
-                          className="block rounded-md px-3 py-2 text-sm text-brand-ink/80 hover:bg-brand-light hover:text-brand-red"
-                          activeProps={{ className: "bg-brand-light text-brand-red" }}
-                        >
-                          {c.label}
-                        </AppLink>
+                        c.label === "Videos" ? (
+                          <div
+                            key={c.to}
+                            className="relative"
+                            onMouseEnter={() => setOpenVideoPopup(true)}
+                            onMouseLeave={() => setOpenVideoPopup(false)}
+                          >
+                            <AppLink
+                              to={c.to}
+                              className="block rounded-md px-3 py-2 text-sm text-brand-ink/80 hover:bg-brand-light hover:text-brand-red"
+                              activeProps={{ className: "bg-brand-light text-brand-red" }}
+                            >
+                              {c.label}
+                            </AppLink>
+
+                            {openVideoPopup && (
+                              <div
+                                className="absolute left-full top-1/2 z-50 -translate-y-1/2"
+                                onMouseEnter={() => setOpenVideoPopup(true)}
+                                onMouseLeave={() => setOpenVideoPopup(false)}
+                              >
+                                <div
+                                  className="absolute -left-2 top-0 h-full w-2"
+                                  aria-hidden="true"
+                                />
+                                <div className="rounded-full border border-border bg-white px-3 py-2 shadow-card">
+                                  <div className="flex items-center gap-2">
+                                    {VIDEO_SOCIAL_LINKS.map(({ label: socialLabel, platform: socialPlatform, Icon }) => (
+                                      <button
+                                        key={socialLabel}
+                                        type="button"
+                                        onClick={() => {
+                                          setActiveSocialPlatform(socialPlatform);
+                                          setOpenVideoPopup(false);
+                                        }}
+                                        aria-label={socialLabel}
+                                        title={socialLabel}
+                                        className="flex h-10 w-10 items-center justify-center rounded-full bg-[#EAF1FF] text-[#2563EB] transition-colors hover:bg-[#2563EB] hover:text-white"
+                                      >
+                                        <Icon className="h-5 w-5" />
+                                      </button>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <AppLink
+                            key={c.to}
+                            to={c.to}
+                            className="block rounded-md px-3 py-2 text-sm text-brand-ink/80 hover:bg-brand-light hover:text-brand-red"
+                            activeProps={{ className: "bg-brand-light text-brand-red" }}
+                          >
+                            {c.label}
+                          </AppLink>
+                        )
                       ))}
                     </div>
                   </div>
@@ -193,16 +273,51 @@ export function Header() {
                     </button>
                     {openMobileDropdown === item.label && (
                       <div className="ml-3 mt-1 space-y-1 border-l-2 border-brand-red/30 pl-3">
-                        {item.children.map((c) => (
-                          <AppLink
+                        {item.children.map((c) =>
+                          c.label === "Videos" ? (
+                          <div
                             key={c.to}
-                            to={c.to}
-                            onClick={() => setOpenMobile(false)}
-                            className="block rounded-md px-3 py-2 text-sm text-brand-ink/80 hover:bg-brand-light hover:text-brand-red"
+                            className="relative overflow-visible space-y-2"
+                            onMouseEnter={() => setOpenVideoPopup(true)}
+                            onMouseLeave={() => setOpenVideoPopup(false)}
                           >
-                            {c.label}
-                          </AppLink>
-                        ))}
+                              <AppLink
+                                to={c.to}
+                                onClick={() => setOpenMobile(false)}
+                                className="block rounded-md px-3 py-2 text-sm text-brand-ink/80 hover:bg-brand-light hover:text-brand-red"
+                              >
+                                {c.label}
+                              </AppLink>
+                              <div className="flex items-center gap-2 px-3 pb-1">
+                                {VIDEO_SOCIAL_LINKS.map(({ label: socialLabel, platform: socialPlatform, Icon }) => (
+                                  <button
+                                    key={socialLabel}
+                                    type="button"
+                                    onClick={() => {
+                                      setActiveSocialPlatform(socialPlatform);
+                                      setOpenMobile(false);
+                                      setOpenVideoPopup(false);
+                                    }}
+                                    aria-label={socialLabel}
+                                    title={socialLabel}
+                                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[#EAF1FF] text-[#2563EB]"
+                                  >
+                                    <Icon className="h-4 w-4" />
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          ) : (
+                            <AppLink
+                              key={c.to}
+                              to={c.to}
+                              onClick={() => setOpenMobile(false)}
+                              className="block rounded-md px-3 py-2 text-sm text-brand-ink/80 hover:bg-brand-light hover:text-brand-red"
+                            >
+                              {c.label}
+                            </AppLink>
+                          ),
+                        )}
                       </div>
                     )}
                   </div>

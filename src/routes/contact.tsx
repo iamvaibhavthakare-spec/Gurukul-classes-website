@@ -9,7 +9,7 @@ const CONTENT_CHECKLIST = [
   { item: "Logo and favicon", status: "Available", note: "High-res logo and favicon assets are added." },
   { item: "Brand colours", status: "Available", note: "Current palette uses ink, white, light blue and primary blue." },
   { item: "Main enquiry email and WhatsApp", status: "Available", note: `${SITE.email} / +${SITE.whatsapp}` },
-  { item: "Requested pages", status: "Available", note: "Home, About, profiles, School, College, Entrance, Updates, Career and Contact are built." },
+  { item: "Requested pages", status: "Available", note: "Home, About, profiles, School, College, Entrance, Updates, Blog, Career and Contact are built." },
   { item: "Course details", status: "Available", note: "Each course page shows overview, duration, schedule and inclusions." },
   { item: "Founder and director photos", status: "Pending", note: "Profile pages are ready; replace placeholders with high-res photos." },
   { item: "Classroom, lab, faculty, event photos", status: "Partial", note: "Base visuals are added; original branch albums are still needed." },

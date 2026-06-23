@@ -41,8 +41,9 @@ export function Footer() {
             <ul className="space-y-2 text-sm text-white/70">
               {[
                 ["About Us", "/about"],
-                ["Vaibhav Sir Profile", "/vaibhav-sir"],
-                ["Bhagyashree Madam Profile", "/bhagyashree-madam"],
+                ["Mr. Vaibhav Thakare Profile", "/vaibhav-sir"],
+                ["Mrs. Bhagyashree Thakare Profile", "/bhagyashree-madam"],
+                ["Blog", "/blog"],
                 ["Courses", "/courses/xi-science"],
                 ["Results", "/results"],
                 ["Gallery", "/gallery"],
