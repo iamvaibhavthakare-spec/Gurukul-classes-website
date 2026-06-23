@@ -16,7 +16,7 @@ import heroStudy from "@/assets/hero-study.jpg";
 
 const GOAL_CARDS = [
   { Icon: BookOpenCheck, title: "School Foundation", text: "VIII, IX and X batches for strong science fundamentals.", path: "/courses/x-ssc-cbse" },
-  { Icon: GraduationCap, title: "XI & XII Science", text: "Board-focused learning with entrance preparation built in.", path: "/courses/xi-science" },
+  { Icon: GraduationCap, title: "XI & XII Science", text: "Board-focused learning with Entrance preparation built in.", path: "/courses/xi-science" },
   { Icon: Target, title: "IIT-JEE", text: "Concept depth, problem solving and rank-focused practice.", path: "/courses/iit-jee" },
   { Icon: Trophy, title: "NEET & MH-CET", text: "Structured medical and CET preparation with test discipline.", path: "/courses/neet" },
 ];
@@ -139,7 +139,7 @@ export function Home() {
                 <div className="rounded-2xl bg-[#111827] p-6 text-white shadow-card">
                   <Trophy className="h-7 w-7 text-[#93C5FD]" />
                   <p className="mt-3 text-2xl font-extrabold">25+ Years</p>
-                  <p className="text-sm text-white/85">of teaching excellence</p>
+                  <p className="text-sm text-white/85">of trust</p>
                 </div>
               </div>
             </div>
@@ -178,7 +178,7 @@ export function Home() {
       {/* 5. Courses */}
       <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-4">
-          <SectionTitle eyebrow="Programs" title="Choose Your Path" description="From foundation classes to elite entrance preparation — we've built a program for every stage." />
+          <SectionTitle eyebrow="Programs" title="Choose Your Path" description="From foundation classes to elite Entrance preparation — we've built a program for every stage." />
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {COURSES.map((c) => <CourseCard key={c.slug} course={c} />)}
           </div>

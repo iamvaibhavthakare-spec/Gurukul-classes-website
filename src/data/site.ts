@@ -12,9 +12,9 @@ export const SITE = {
   primaryPhoneRaw: "+919820363807",
   whatsapp: "919820363807",
   socials: {
-    facebook: "https://www.facebook.com/GurukulScienceClasses/",
-    instagram: "https://www.instagram.com/gurukulscienceclasses",
-    youtube: "https://www.youtube.com/@gurukulscienceclasses1866",
+    facebook: "https://www.facebook.com/GurukulScienceClasses",
+    instagram: "https://www.instagram.com/gurukulscienceclasses/",
+    youtube: "https://www.youtube.com/@gurukulscienceclass/",
   },
 };
 
@@ -25,6 +25,7 @@ export interface Branch {
   address: string;
   phone: string;
   phoneRaw: string;
+  mapUrl?: string;
   badge?: string;
 }
 
@@ -37,6 +38,8 @@ export const BRANCHES: Branch[] = [
       "2nd Floor, Yadnyavalkya Bld, Sahajanand Chowk, Agra Road, Kalyan (W) 421301",
     phone: "+91 9833036464",
     phoneRaw: "+919833036464",
+    mapUrl:
+      "https://www.google.com/maps/place/Gurukul+science+classes,+Yadnyavalkya+hall,+Sahjanand+Chowk,+Kalyan,+Maharashtra+421301/data=!4m2!3m1!1s0x3be795b3b17e78ed:0xf37353c315d0dec2!18m1!1e1?utm_source=mstt_1&entry=gps&coh=192189&g_ep=CAESBzI2LjIzLjEYACCenQoqiwEsOTQyNjc3MjcsOTQyOTIxOTUsOTQyOTk1MzIsMTAwNzk2NDk4LDEwMDc5Nzc2MSwxMDA3OTY1MzUsOTQyODA1NzYsOTQyMDczOTQsOTQyMDc1MDYsOTQyMDg1MDYsOTQyMTg2NTMsOTQyMjk4MzksOTQyNzUxNjgsOTQyNzk2MTksMTAwODE1NjM1QgJJTg%3D%3D&skid=d6c24800-81f4-487e-9672-91ada59aad7a&g_st=aw",
     badge: "Head Office",
   },
   {
@@ -47,6 +50,8 @@ export const BRANCHES: Branch[] = [
       "G Wing, Vrindavan Palm, Near Arati Nagari, Wayle Nagar, Khadakpada, Behind Union Bank of India, Kalyan (W) 421301",
     phone: "+91 9594366464",
     phoneRaw: "+919594366464",
+    mapUrl:
+      "https://www.google.com/maps/place/Gurukul+Science+Classes/data=!4m2!3m1!1s0x0:0x9000ae4dc07b864b?sa=X&ved=1t:2428&ictx=111",
   },
   {
     slug: "dhamankar-naka",
@@ -56,6 +61,8 @@ export const BRANCHES: Branch[] = [
       "2nd Floor, Laxmi Vishnu Complex, Near Post Office, B.N.N College Road, Dhamankar Naka, Bhiwandi",
     phone: "+91 9594066464",
     phoneRaw: "+919594066464",
+    mapUrl:
+      "https://www.google.com/maps/place/Gurukul+science+class+bhiwandi+गुरुकुल+सायन्स+क्लास+भिवंडी/@19.2874427,73.0551285,931m/data=!3m1!1e3!4m5!3m4!1s0x3be7bd84135deda3:0x305c71f62d3c501c!8m2!3d19.2874436!4d73.0551285!5m1!1e1!18m1!1e1?entry=ttu&g_ep=EgoyMDI2MDYxMC4wIKXMDSoASAFQAw%3D%3D",
   },
   {
     slug: "mandai",
@@ -65,6 +72,7 @@ export const BRANCHES: Branch[] = [
       "1st Floor, Gokhani Complex, Navi Chawl, Opp Memsaab Collection, Above Bharat Gas, Mandai Road, Bhiwandi",
     phone: "+91 9833056464",
     phoneRaw: "+919833056464",
+    mapUrl: "https://maps.app.goo.gl/nbtY7FVsDZPoQwah9",
   },
   {
     slug: "anjurphata",
@@ -74,6 +82,7 @@ export const BRANCHES: Branch[] = [
       "Shop No. 12, Ground Floor, Atlanta Luxuria, Opp. Oswal College & School, Kamatghar Road, Anjurphata, Bhiwandi",
     phone: "+91 9833866464",
     phoneRaw: "+919833866464",
+    mapUrl: "https://goo.gl/maps/HS1TZmx1igrfkaLi7",
   },
 ];
 
@@ -116,7 +125,7 @@ export const COURSES: Course[] = [
     slug: "ix-ssc-cbse",
     path: "/courses/ix-ssc-cbse",
     title: "IX SSC / CBSE",
-    short: "Strong groundwork for boards & entrance",
+    short: "Strong groundwork for boards & Entrance",
     description:
       "A focused Class 9 programme that sharpens fundamentals in Math and Science while integrating early exposure to NEET / JEE-style reasoning.",
     subjects: ["Mathematics", "Science", "English", "Social Science"],
@@ -134,7 +143,7 @@ export const COURSES: Course[] = [
     slug: "x-ssc-cbse",
     path: "/courses/x-ssc-cbse",
     title: "X SSC / CBSE",
-    short: "Board excellence + entrance head-start",
+    short: "Board excellence + Entrance head-start",
     description:
       "A dual-track Class 10 programme that delivers consistent board performance and a strong head-start for XI Science, JEE & NEET foundations.",
     subjects: ["Algebra", "Geometry", "Science I & II", "English"],
@@ -142,7 +151,7 @@ export const COURSES: Course[] = [
     tone: "red",
     category: "School",
     highlights: [
-      "Board-pattern + entrance-pattern teaching",
+      "Board-pattern + Entrance-pattern teaching",
       "Chapter-wise tests & periodic exams",
       "Doubt-solving every day",
       "Career & stream guidance",
@@ -170,9 +179,9 @@ export const COURSES: Course[] = [
     slug: "xii-science",
     path: "/courses/xii-science",
     title: "XII Science",
-    short: "Final-year sprint for board + entrance",
+    short: "Final-year sprint for board + Entrance",
     description:
-      "The decisive year — sharpened revision, full-syllabus mock tests, and entrance-grade rigour to maximise scores in HSC, JEE, NEET, MH-CET.",
+      "The decisive year — sharpened revision, full-syllabus mock tests, and Entrance-grade rigour to maximise scores in HSC, JEE, NEET, MH-CET.",
     subjects: ["Physics", "Chemistry", "Mathematics", "Biology"],
     icon: Brain,
     tone: "red",
@@ -188,7 +197,7 @@ export const COURSES: Course[] = [
     slug: "mh-cet",
     path: "/courses/mh-cet",
     title: "MH-CET",
-    short: "State-level engineering & pharmacy entrance",
+    short: "State-level engineering & pharmacy Entrance",
     description:
       "Maharashtra CET focused coaching with state-board aligned strategy, speed-and-accuracy drills, and CET-pattern mock tests.",
     subjects: ["Physics", "Chemistry", "Mathematics", "Biology"],
@@ -206,9 +215,9 @@ export const COURSES: Course[] = [
     slug: "neet",
     path: "/courses/neet",
     title: "NEET",
-    short: "Medical entrance — the doctor's path",
+    short: "Medical Entrance — the doctor's path",
     description:
-      "Comprehensive NEET coaching by senior medical-entrance faculty, with NCERT mastery, biology micro-concept drills, and full-length test series.",
+      "Comprehensive NEET coaching by senior medical-Entrance faculty, with NCERT mastery, biology micro-concept drills, and full-length test series.",
     subjects: ["Physics", "Chemistry", "Botany", "Zoology"],
     icon: Stethoscope,
     tone: "deep",
@@ -246,8 +255,8 @@ export const COURSE_BY_SLUG: Record<string, Course> =
 export const STATS = [
   { value: 10000, suffix: "+", label: "Successful Students" },
   { value: 6000, suffix: "+", label: "In Top Colleges" },
-  { value: 25, suffix: "+", label: "Years of Excellence" },
-  { value: 5, suffix: "", label: "Branches across MMR" },
+  { value: 25, suffix: "+", label: "Years of Trust" },
+  { value: 5, suffix: "", label: "Kalyan & Bhiwandi" },
 ];
 
 export const WHY_CHOOSE = [
@@ -257,7 +266,7 @@ export const WHY_CHOOSE = [
   },
   {
     title: "Integrated Programs",
-    text: "Seamless integration of board syllabus with entrance preparation — no double burden.",
+    text: "Seamless integration of board syllabus with Entrance preparation — no double burden.",
   },
   {
     title: "Smart Study Material",
@@ -291,7 +300,7 @@ export const TESTIMONIALS = [
   { name: "Rohit Patil", role: "IIT-JEE 2024, Bhiwandi", text: "The JEE faculty pushed me beyond textbook problems. Without their problem-solving sessions I wouldn't have cracked Advanced." },
   { name: "Mrs. Deshpande", role: "Parent, Class XII", text: "Regular parent updates and a sincere mentor team — Gurukul felt like a true partner in my daughter's preparation." },
   { name: "Saanvi Kulkarni", role: "MH-CET Topper", text: "The CET-pattern mock tests and speed drills made me exam-ready months in advance. Highly recommended." },
-  { name: "Aarav Joshi", role: "XI Science Student", text: "Best integrated programme in Kalyan. I never feel boards and entrance are two different things anymore." },
+  { name: "Aarav Joshi", role: "XI Science Student", text: "Best integrated programme in Kalyan. I never feel boards and Entrance are two different things anymore." },
   { name: "Prisha Nair", role: "Class X Student", text: "Chapter tests and correction sessions helped me understand exactly where I was losing marks." },
   { name: "Mr. Kulkarni", role: "Parent, IX Foundation", text: "The regular updates gave us confidence that our child was building habits, not just attending classes." },
   { name: "Devansh Shah", role: "JEE Main Aspirant", text: "The faculty explained difficult physics problems step by step and made revision feel manageable." },

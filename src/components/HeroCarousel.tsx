@@ -19,7 +19,7 @@ const SLIDES = [
   {
     eyebrow: "Top results year after year",
     title: "NEET, MH-CET & IIT-JEE Preparation in Kalyan and Bhiwandi",
-    description: "Integrated programs that balance HSC scores with entrance excellence.",
+    description: "Integrated programs that balance HSC scores with Entrance excellence.",
     image: heroStudy,
     badge: "5 Branches",
   },
@@ -102,7 +102,7 @@ export function HeroCarousel() {
 
           {/* Floating badges */}
           <div className="mt-8 flex flex-wrap gap-3">
-            {["10,000+ Students", "5 Branches", "25+ Years Trusted"].map((b) => (
+            {["10,000+ Students", "5 Branches", "25+ Years of Trust"].map((b) => (
               <span key={b} className="inline-flex items-center gap-2 rounded-2xl glass-card px-4 py-2 text-xs font-semibold text-white">
                 <Star className="h-3.5 w-3.5 text-brand-yellow" /> {b}
               </span>

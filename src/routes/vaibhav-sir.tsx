@@ -5,7 +5,7 @@ import vaibhavThakare from "@/assets/vaibhav-thakare.jpg";
 
 const strengths = [
   "Concept-first science and mathematics mentoring",
-  "Board and entrance exam preparation strategy",
+  "Board and Entrance exam preparation strategy",
   "Student progress reviews with parents",
   "Batch discipline, test planning and academic counselling",
 ];

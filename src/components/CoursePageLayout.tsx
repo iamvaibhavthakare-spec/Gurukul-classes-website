@@ -27,24 +27,24 @@ const LIVE_COURSE_DETAILS: Record<string, { duration: string; schedule: string; 
     included: ["Weekly tests", "Printed notes", "Specialized teachers for each subject", "Teaching-aided visual tools"],
   },
   "xii-science": {
-    duration: "Full board and entrance-focused academic year",
-    schedule: "Board syllabus coverage with regular tests, revision and entrance-linked practice",
+    duration: "Full board and Entrance-focused academic year",
+    schedule: "Board syllabus coverage with regular tests, revision and Entrance-linked practice",
     included: ["Weekly tests", "Printed notes", "Specialized subject faculty", "Permanent progress reports"],
   },
   "mh-cet": {
     duration: "One-year MHT-CET program along with boards",
     schedule: "Entrance topics covered with XI and XII syllabus, plus chapter and weekly cumulative tests",
-    included: ["70% entrance syllabus before XII boards", "20+ final-pattern mock tests", "All-India test series", "DPP and entrance study material"],
+    included: ["70% Entrance syllabus before XII boards", "20+ final-pattern mock tests", "All-India test series", "DPP and Entrance study material"],
   },
   neet: {
     duration: "Integrated NEET preparation with XI and XII topics",
     schedule: "PCB tests, doubt-solving and weekly cumulative practice through the year",
-    included: ["70% entrance syllabus before XII boards", "20+ final-pattern mock tests", "All-India test series", "DPP and entrance study material"],
+    included: ["70% Entrance syllabus before XII boards", "20+ final-pattern mock tests", "All-India test series", "DPP and Entrance study material"],
   },
   "iit-jee": {
     duration: "Two-year JEE Main and Advanced program for X passed students",
     schedule: "Basics-to-advanced JEE preparation alongside board examination readiness",
-    included: ["XI and XII integrated entrance coverage", "Chapter-wise test series", "Weekly cumulative tests", "DPP and entrance study material"],
+    included: ["XI and XII integrated Entrance coverage", "Chapter-wise test series", "Weekly cumulative tests", "DPP and Entrance study material"],
   },
 };
 
