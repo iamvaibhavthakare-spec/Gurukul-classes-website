@@ -1,5 +1,5 @@
 import { MessageCircle, Phone } from "lucide-react";
-import { SITE } from "@/data/site";
+import { SITE, WHATSAPP_FORMAL_MESSAGE } from "@/data/site";
 
 export function MobileCallBar() {
   return (
@@ -11,7 +11,7 @@ export function MobileCallBar() {
         <Phone className="h-4 w-4" /> Call Now
       </a>
       <a
-        href={`https://wa.me/${SITE.whatsapp}`}
+        href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(WHATSAPP_FORMAL_MESSAGE)}`}
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center justify-center gap-2 py-3 text-sm font-semibold text-white bg-[#25D366]"

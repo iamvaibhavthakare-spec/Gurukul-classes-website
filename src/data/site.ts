@@ -18,6 +18,12 @@ export const SITE = {
   },
 };
 
+export const WHATSAPP_FORMAL_MESSAGE = `Hello Team Gurukul,
+
+I found your contact details on the Gurukul Science Classes website and would like to know more about your courses. Could you please share the course details, admission process, and fee structure?
+
+Regards`;
+
 export interface Branch {
   slug: string;
   name: string;

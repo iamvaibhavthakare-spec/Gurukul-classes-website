@@ -1,8 +1,8 @@
-import { SITE } from "@/data/site";
+import { SITE, WHATSAPP_FORMAL_MESSAGE } from "@/data/site";
 
 export function WhatsAppButton() {
   const href = `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
-    "Hi Gurukul, I'd like to know more about your courses.",
+    WHATSAPP_FORMAL_MESSAGE,
   )}`;
   return (
     <a

@@ -3,7 +3,7 @@ import { ChevronDown, Facebook, Instagram, Menu, Phone, X, Youtube } from "lucid
 import { AppLink } from "@/components/AppLink";
 import { Logo } from "./Logo";
 import { SocialEmbedModal, type SocialPlatform } from "./SocialEmbedModal";
-import { SITE } from "@/data/site";
+import { SITE, WHATSAPP_FORMAL_MESSAGE } from "@/data/site";
 import { cn } from "@/lib/utils";
 
 type NavItem =
@@ -224,7 +224,7 @@ export function Header() {
               <Phone className="h-4 w-4" /> Call Now
             </a>
             <a
-              href={`https://wa.me/${SITE.whatsapp}`}
+              href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(WHATSAPP_FORMAL_MESSAGE)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:inline-flex items-center gap-2 rounded-full border border-[#25D366] px-4 py-2 text-sm font-semibold text-[#1f9c52] hover:bg-[#25D366] hover:text-white transition-colors"

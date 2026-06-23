@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Send } from "lucide-react";
 import { toast } from "sonner";
-import { BRANCH_OPTIONS, COURSE_OPTIONS, SITE } from "@/data/site";
+import { BRANCH_OPTIONS, COURSE_OPTIONS, SITE, WHATSAPP_FORMAL_MESSAGE } from "@/data/site";
 import { cn } from "@/lib/utils";
 
 type Variant = "enquiry" | "contact" | "career";
@@ -31,7 +31,9 @@ export function EnquiryForm({ variant = "enquiry", className, title, subtitle }:
 
     setLoading(true);
     const lines = Object.entries(obj).map(([k, v]) => `${k}: ${v}`).join("\n");
-    const body = encodeURIComponent(`New ${variant} request from website:\n\n${lines}`);
+    const body = encodeURIComponent(
+      `${WHATSAPP_FORMAL_MESSAGE}\n\nNew ${variant} request from website:\n\n${lines}`,
+    );
     const subject = encodeURIComponent(`${variant.toUpperCase()} — ${obj.name || obj.studentName || "Website"}`);
 
     // Open WhatsApp in a new tab as the primary channel
