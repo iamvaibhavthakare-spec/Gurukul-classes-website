@@ -2,6 +2,10 @@ import type { LucideIcon } from "lucide-react";
 import {
   Atom, FlaskConical, Microscope, Rocket, Brain, Stethoscope, GraduationCap, BookOpen,
 } from "lucide-react";
+import bhagyashreePhoto from "@/assets/bhagyashree-thakare.jpg";
+import vaibhavPhoto from "@/assets/vaibhav-thakare.jpg";
+import heroStudentsPhoto from "@/assets/hero-students.jpg";
+import aboutTeachingPhoto from "@/assets/about-teaching.jpg";
 
 export const SITE = {
   name: "Gurukul Science Classes",
@@ -295,9 +299,9 @@ export const WHY_CHOOSE = [
 export const METHODOLOGY = [
   { step: "01", title: "Diagnostic Assessment", text: "Map every student's strengths and gaps before the journey begins." },
   { step: "02", title: "Concept Lectures", text: "Senior faculty deliver concept-first lectures with real-life examples." },
-  { step: "03", title: "Practice & DPPs", text: "Daily Practice Problems lock in concepts and build problem-solving speed." },
+  { step: "03", title: "Practice and Revision", text: "Daily Practice Problems lock in concepts and build problem-solving speed." },
   { step: "04", title: "Periodic Testing", text: "Chapter, monthly, prelim and full-syllabus tests modelled on actual exams." },
-  { step: "05", title: "Doubt Sessions", text: "Walk-in doubt solving and one-on-one mentoring throughout the year." },
+  { step: "05", title: "Doubt Solving Session", text: "Walk-in doubt solving and one-on-one mentoring throughout the year." },
   { step: "06", title: "Performance Review", text: "Detailed analytics shared with students and parents for course-correction." },
 ];
 
@@ -314,14 +318,14 @@ export const TESTIMONIALS = [
 ];
 
 export const RESULTS = [
-  { name: "Aarav S.", exam: "NEET 2024", score: "682 / 720", college: "Govt. Medical College" },
-  { name: "Ishika M.", exam: "JEE Advanced 2024", score: "AIR 2,184", college: "IIT Bombay" },
-  { name: "Riya P.", exam: "MH-CET 2024", score: "99.87 %ile", college: "VJTI Mumbai" },
-  { name: "Kabir T.", exam: "JEE Main 2024", score: "99.6 %ile", college: "NIT Surathkal" },
-  { name: "Saanvi K.", exam: "NEET 2024", score: "656 / 720", college: "Grant Medical College" },
-  { name: "Vivaan R.", exam: "HSC Science 2024", score: "94.50 %", college: "Mithibai College" },
-  { name: "Anika D.", exam: "MH-CET 2024", score: "99.71 %ile", college: "COEP Pune" },
-  { name: "Rudra J.", exam: "JEE Advanced 2024", score: "AIR 4,902", college: "IIT Madras" },
+  { name: "Aarav S.", exam: "NEET 2024", score: "682 / 720", college: "Govt. Medical College", photo: bhagyashreePhoto },
+  { name: "Ishika M.", exam: "JEE Advanced 2024", score: "AIR 2,184", college: "IIT Bombay", photo: vaibhavPhoto },
+  { name: "Riya P.", exam: "MH-CET 2024", score: "99.87 %ile", college: "VJTI Mumbai", photo: heroStudentsPhoto },
+  { name: "Kabir T.", exam: "JEE Main 2024", score: "99.6 %ile", college: "NIT Surathkal", photo: aboutTeachingPhoto },
+  { name: "Saanvi K.", exam: "NEET 2024", score: "656 / 720", college: "Grant Medical College", photo: bhagyashreePhoto },
+  { name: "Vivaan R.", exam: "HSC Science 2024", score: "94.50 %", college: "Mithibai College", photo: vaibhavPhoto },
+  { name: "Anika D.", exam: "MH-CET 2024", score: "99.71 %ile", college: "COEP Pune", photo: heroStudentsPhoto },
+  { name: "Rudra J.", exam: "JEE Advanced 2024", score: "AIR 4,902", college: "IIT Madras", photo: aboutTeachingPhoto },
 ];
 
 export const GALLERY_PROMPTS = [

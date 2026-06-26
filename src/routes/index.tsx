@@ -15,7 +15,7 @@ import heroStudents from "@/assets/hero-students.jpg";
 import heroStudy from "@/assets/hero-study.jpg";
 
 const GOAL_CARDS = [
-  { Icon: BookOpenCheck, title: "School Foundation", text: "VIII, IX and X batches for strong science fundamentals.", path: "/courses/x-ssc-cbse" },
+  { Icon: BookOpenCheck, title: "School Foundation", text: "VIII, IX and X batches (SSC) (CBSC) for strong science fundamentals.", path: "/courses/x-ssc-cbse" },
   { Icon: GraduationCap, title: "XI & XII Science", text: "Board-focused learning with Entrance preparation built in.", path: "/courses/xi-science" },
   { Icon: Target, title: "IIT-JEE", text: "Concept depth, problem solving and rank-focused practice.", path: "/courses/iit-jee" },
   { Icon: Trophy, title: "NEET & MH-CET", text: "Structured medical and CET preparation with test discipline.", path: "/courses/neet" },
@@ -211,7 +211,7 @@ export function Home() {
       <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-4">
           <SectionTitle eyebrow="Result Showcase" title="Our toppers tell our story" description="A handful of recent results from across NEET, JEE, MH-CET and HSC Science." />
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {RESULTS.slice(0, 8).map((r) => <ResultCard key={r.name} result={r} />)}
           </div>
           <div className="mt-10 text-center">

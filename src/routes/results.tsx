@@ -3,12 +3,16 @@ import { SectionTitle } from "@/components/SectionTitle";
 import { ResultCard } from "@/components/ResultCard";
 import { StatsCounter } from "@/components/StatsCounter";
 import { RESULTS } from "@/data/site";
+import bhagyashreePhoto from "@/assets/bhagyashree-thakare.jpg";
+import vaibhavPhoto from "@/assets/vaibhav-thakare.jpg";
+import heroStudentsPhoto from "@/assets/hero-students.jpg";
+import aboutTeachingPhoto from "@/assets/about-teaching.jpg";
 
 const DISPLAY_RESULTS = [
-  { name: "Aarohi P.", exam: "NEET 2025", score: "Topper photo pending", college: "Final result data required" },
-  { name: "Vedant K.", exam: "JEE Main 2025", score: "Score pending", college: "Final admission data required" },
-  { name: "Mihika S.", exam: "MH-CET 2025", score: "Percentile pending", college: "Final result data required" },
-  { name: "Samarth R.", exam: "HSC Science 2025", score: "Marks pending", college: "Final result data required" },
+  { name: "Aarohi P.", exam: "NEET 2025", score: "Topper photo pending", college: "Final result data required", photo: bhagyashreePhoto },
+  { name: "Vedant K.", exam: "JEE Main 2025", score: "Score pending", college: "Final admission data required", photo: vaibhavPhoto },
+  { name: "Mihika S.", exam: "MH-CET 2025", score: "Percentile pending", college: "Final result data required", photo: heroStudentsPhoto },
+  { name: "Samarth R.", exam: "HSC Science 2025", score: "Marks pending", college: "Final result data required", photo: aboutTeachingPhoto },
   ...RESULTS,
 ];
 
@@ -25,7 +29,7 @@ export function Results() {
       <section className="py-16 md:py-24 mt-12 bg-white">
         <div className="container mx-auto px-4">
           <SectionTitle eyebrow="Toppers" title="Recent Result Showcase" />
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {DISPLAY_RESULTS.map((result) => <ResultCard key={`${result.exam}-${result.name}`} result={result} />)}
           </div>
         </div>
