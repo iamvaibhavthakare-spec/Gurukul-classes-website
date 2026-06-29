@@ -42,6 +42,10 @@ export async function fetchJson<T>(path: string, init?: RequestInit): Promise<T>
     throw new Error(message);
   }
 
+  if (!isJson) {
+    throw new Error("Expected a JSON response.");
+  }
+
   return payload as T;
 }
 
