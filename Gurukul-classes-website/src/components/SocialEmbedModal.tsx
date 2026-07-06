@@ -31,6 +31,74 @@ type YoutubeUpload = {
   watchUrl: string;
 };
 
+// Keep a small fallback so the YouTube tab still shows content when the API is unavailable.
+const DEFAULT_YOUTUBE_UPLOADS: YoutubeUpload[] = [
+  {
+    videoId: "0H8DY7-Ncso",
+    title: "Latest Gurukul Short 1",
+    thumbnailUrl: "https://i.ytimg.com/vi/0H8DY7-Ncso/hqdefault.jpg",
+    durationText: null,
+    metadataText: "Published June 5, 2026",
+    watchUrl: "https://www.youtube.com/watch?v=0H8DY7-Ncso",
+  },
+  {
+    videoId: "pWsVfXppLXc",
+    title: "Latest Gurukul Short 2",
+    thumbnailUrl: "https://i.ytimg.com/vi/pWsVfXppLXc/hqdefault.jpg",
+    durationText: null,
+    metadataText: "Published June 4, 2026",
+    watchUrl: "https://www.youtube.com/watch?v=pWsVfXppLXc",
+  },
+  {
+    videoId: "D4QlUy1TWOk",
+    title: "Latest Gurukul Short 3",
+    thumbnailUrl: "https://i.ytimg.com/vi/D4QlUy1TWOk/hqdefault.jpg",
+    durationText: null,
+    metadataText: "Published June 3, 2026",
+    watchUrl: "https://www.youtube.com/watch?v=D4QlUy1TWOk",
+  },
+  {
+    videoId: "xNq0QPMeEUU",
+    title: "Latest Gurukul Short 4",
+    thumbnailUrl: "https://i.ytimg.com/vi/xNq0QPMeEUU/hqdefault.jpg",
+    durationText: null,
+    metadataText: "Published June 2, 2026",
+    watchUrl: "https://www.youtube.com/watch?v=xNq0QPMeEUU",
+  },
+  {
+    videoId: "8xZIj70aQMU",
+    title: "Latest Gurukul Short 5",
+    thumbnailUrl: "https://i.ytimg.com/vi/8xZIj70aQMU/hqdefault.jpg",
+    durationText: null,
+    metadataText: "Published June 1, 2026",
+    watchUrl: "https://www.youtube.com/watch?v=8xZIj70aQMU",
+  },
+  {
+    videoId: "i5QwCFxrmLc",
+    title: "Latest Gurukul Short 6",
+    thumbnailUrl: "https://i.ytimg.com/vi/i5QwCFxrmLc/hqdefault.jpg",
+    durationText: null,
+    metadataText: "Published May 31, 2026",
+    watchUrl: "https://www.youtube.com/watch?v=i5QwCFxrmLc",
+  },
+  {
+    videoId: "WZDXIk-aM04",
+    title: "Latest Gurukul Short 7",
+    thumbnailUrl: "https://i.ytimg.com/vi/WZDXIk-aM04/hqdefault.jpg",
+    durationText: null,
+    metadataText: "Published May 30, 2026",
+    watchUrl: "https://www.youtube.com/watch?v=WZDXIk-aM04",
+  },
+  {
+    videoId: "WeHxvnW5FEc",
+    title: "Latest Gurukul Short 8",
+    thumbnailUrl: "https://i.ytimg.com/vi/WeHxvnW5FEc/hqdefault.jpg",
+    durationText: null,
+    metadataText: "Published May 29, 2026",
+    watchUrl: "https://www.youtube.com/watch?v=WeHxvnW5FEc",
+  },
+];
+
 const INSTAGRAM_EMBEDS = [
   "https://www.instagram.com/reel/DXvn_l3k4MG/",
   "https://www.instagram.com/p/DZJxJq3F28V/",
@@ -82,8 +150,10 @@ const SOCIAL_CONFIG: Record<
 };
 
 export function SocialEmbedModal({ platform, onSelectPlatform, onClose }: SocialEmbedModalProps) {
-  const [youtubeUploads, setYoutubeUploads] = useState<YoutubeUpload[]>([]);
-  const [activeYoutubeVideoId, setActiveYoutubeVideoId] = useState<string | null>(null);
+  const [youtubeUploads, setYoutubeUploads] = useState<YoutubeUpload[]>(DEFAULT_YOUTUBE_UPLOADS);
+  const [activeYoutubeVideoId, setActiveYoutubeVideoId] = useState<string | null>(
+    DEFAULT_YOUTUBE_UPLOADS[0]?.videoId ?? null,
+  );
   const [youtubeLoading, setYoutubeLoading] = useState(false);
   const [youtubeError, setYoutubeError] = useState<string | null>(null);
 
@@ -139,13 +209,15 @@ export function SocialEmbedModal({ platform, onSelectPlatform, onClose }: Social
         }
 
         const uploads = records || [];
-        setYoutubeUploads(uploads);
-        setActiveYoutubeVideoId((current) =>
-          uploads.some((item) => item.videoId === current) ? current : uploads[0]?.videoId || null,
-        );
-
-        if (!records) {
-          setYoutubeError("We could not load the latest uploads right now.");
+        if (uploads.length > 0) {
+          setYoutubeUploads(uploads);
+          setActiveYoutubeVideoId((current) =>
+            uploads.some((item) => item.videoId === current)
+              ? current
+              : uploads[0]?.videoId || null,
+          );
+        } else {
+          setYoutubeError("Showing featured uploads while the live feed is unavailable.");
         }
       })
       .finally(() => {
@@ -165,6 +237,7 @@ export function SocialEmbedModal({ platform, onSelectPlatform, onClose }: Social
   const activeYoutubeVideo =
     youtubeUploads.find((item) => item.videoId === activeYoutubeVideoId) ??
     youtubeUploads[0] ??
+    DEFAULT_YOUTUBE_UPLOADS[0] ??
     null;
   const youtubeVideosTabUrl = `${SITE.socials.youtube}/videos`;
 
@@ -264,50 +337,44 @@ export function SocialEmbedModal({ platform, onSelectPlatform, onClose }: Social
                 <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">
                   <div className="space-y-4">
                     <div className="overflow-hidden rounded-3xl border border-border bg-white shadow-soft">
-                      {activeYoutubeVideo ? (
-                        <div className="aspect-video">
-                          <iframe
-                            title={activeYoutubeVideo.title}
-                            src={`https://www.youtube.com/embed/${activeYoutubeVideo.videoId}?autoplay=0&rel=0&modestbranding=1`}
-                            className="h-full w-full"
-                            loading="lazy"
-                            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                            allowFullScreen
-                            referrerPolicy="strict-origin-when-cross-origin"
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex aspect-video items-center justify-center bg-gradient-to-br from-[#F6F8FA] to-white px-8 text-center text-sm text-muted-foreground">
-                          {youtubeLoading
-                            ? "Loading the latest YouTube uploads..."
-                            : "Select the YouTube tab to load the latest uploads."}
-                        </div>
-                      )}
+                      <div className="aspect-video">
+                        <iframe
+                          title={activeYoutubeVideo?.title || "YouTube uploads"}
+                          src={
+                            activeYoutubeVideo
+                              ? `https://www.youtube.com/embed/${activeYoutubeVideo.videoId}?autoplay=0&rel=0&modestbranding=1`
+                              : `https://www.youtube.com/embed/${DEFAULT_YOUTUBE_UPLOADS[0].videoId}?autoplay=0&rel=0&modestbranding=1`
+                          }
+                          className="h-full w-full"
+                          loading="lazy"
+                          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                          allowFullScreen
+                          referrerPolicy="strict-origin-when-cross-origin"
+                        />
+                      </div>
                     </div>
 
-                    {activeYoutubeVideo ? (
-                      <div className="rounded-3xl border border-[#DCE6FF] bg-white p-4 shadow-soft">
-                        <p className="text-xs font-bold uppercase tracking-widest text-[#2563EB]">
-                          Featured upload
+                    <div className="rounded-3xl border border-[#DCE6FF] bg-white p-4 shadow-soft">
+                      <p className="text-xs font-bold uppercase tracking-widest text-[#2563EB]">
+                        Featured upload
+                      </p>
+                      <h3 className="mt-2 text-xl font-bold text-brand-ink">
+                        {activeYoutubeVideo?.title || "YouTube uploads"}
+                      </h3>
+                      {activeYoutubeVideo?.metadataText ? (
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          {activeYoutubeVideo.metadataText}
                         </p>
-                        <h3 className="mt-2 text-xl font-bold text-brand-ink">
-                          {activeYoutubeVideo.title}
-                        </h3>
-                        {activeYoutubeVideo.metadataText ? (
-                          <p className="mt-2 text-sm text-muted-foreground">
-                            {activeYoutubeVideo.metadataText}
-                          </p>
-                        ) : null}
-                        <a
-                          href={activeYoutubeVideo.watchUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-4 inline-flex rounded-full bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white"
-                        >
-                          Open on YouTube
-                        </a>
-                      </div>
-                    ) : null}
+                      ) : null}
+                      <a
+                        href={activeYoutubeVideo?.watchUrl || youtubeVideosTabUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-4 inline-flex rounded-full bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white"
+                      >
+                        Open on YouTube
+                      </a>
+                    </div>
                   </div>
 
                   <div className="rounded-3xl border border-border bg-white p-4 shadow-soft">
@@ -319,6 +386,14 @@ export function SocialEmbedModal({ platform, onSelectPlatform, onClose }: Social
                         <p className="mt-1 text-sm text-muted-foreground">
                           Recent uploads from the channel videos tab.
                         </p>
+                        {youtubeLoading ? (
+                          <p className="mt-2 text-xs font-medium text-[#2563EB]">
+                            Refreshing the live feed...
+                          </p>
+                        ) : null}
+                        {youtubeError ? (
+                          <p className="mt-2 text-xs font-medium text-amber-600">{youtubeError}</p>
+                        ) : null}
                       </div>
                       <a
                         href={youtubeVideosTabUrl}
@@ -329,104 +404,60 @@ export function SocialEmbedModal({ platform, onSelectPlatform, onClose }: Social
                         Videos tab
                       </a>
                     </div>
-                    {youtubeLoading ? (
-                      <div className="max-h-[calc(100vh-18rem)] space-y-3 overflow-y-auto pr-1">
-                        {Array.from({ length: 5 }).map((_, index) => (
-                          <div
-                            key={index}
-                            className="flex animate-pulse items-start gap-3 rounded-2xl border border-border bg-[#FAFBFF] p-3"
+                    <div className="max-h-[calc(100vh-18rem)] space-y-3 overflow-y-auto pr-1">
+                      {youtubeUploads.map((video) => {
+                        const selected = video.videoId === activeYoutubeVideo?.videoId;
+                        return (
+                          <button
+                            key={video.videoId}
+                            type="button"
+                            onClick={() => setActiveYoutubeVideoId(video.videoId)}
+                            className={[
+                              "flex w-full items-start gap-3 rounded-2xl border p-3 text-left transition-colors",
+                              selected
+                                ? "border-[#2563EB] bg-[#EAF1FF]"
+                                : "border-border bg-[#FAFBFF] hover:bg-[#F3F7FF]",
+                            ].join(" ")}
                           >
-                            <div className="h-20 w-32 flex-none rounded-xl bg-[#EAF1FF]" />
-                            <div className="min-w-0 flex-1 space-y-2 pt-1">
-                              <div className="h-3 w-28 rounded-full bg-[#EAF1FF]" />
-                              <div className="h-4 w-full rounded-full bg-[#EAF1FF]" />
-                              <div className="h-4 w-3/4 rounded-full bg-[#EAF1FF]" />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : youtubeError ? (
-                      <div className="rounded-2xl border border-dashed border-[#DCE6FF] bg-[#FAFBFF] p-5 text-sm text-muted-foreground">
-                        <p>{youtubeError}</p>
-                        <a
-                          href={youtubeVideosTabUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-4 inline-flex rounded-full bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white"
-                        >
-                          Open videos tab
-                        </a>
-                      </div>
-                    ) : youtubeUploads.length === 0 ? (
-                      <div className="rounded-2xl border border-dashed border-[#DCE6FF] bg-[#FAFBFF] p-5 text-sm text-muted-foreground">
-                        No uploads were found right now.
-                        <div className="mt-4">
-                          <a
-                            href={youtubeVideosTabUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex rounded-full bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white"
-                          >
-                            Open videos tab
-                          </a>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="max-h-[calc(100vh-18rem)] space-y-3 overflow-y-auto pr-1">
-                        {youtubeUploads.map((video) => {
-                          const selected = video.videoId === activeYoutubeVideo?.videoId;
-                          return (
-                            <button
-                              key={video.videoId}
-                              type="button"
-                              onClick={() => setActiveYoutubeVideoId(video.videoId)}
-                              className={[
-                                "flex w-full items-start gap-3 rounded-2xl border p-3 text-left transition-colors",
-                                selected
-                                  ? "border-[#2563EB] bg-[#EAF1FF]"
-                                  : "border-border bg-[#FAFBFF] hover:bg-[#F3F7FF]",
-                              ].join(" ")}
-                            >
-                              <div className="relative h-20 w-32 flex-none overflow-hidden rounded-xl bg-[#EAF1FF]">
-                                <img
-                                  src={
-                                    video.thumbnailUrl ||
-                                    `https://i.ytimg.com/vi/${video.videoId}/hqdefault.jpg`
-                                  }
-                                  alt={video.title}
-                                  className="h-full w-full object-cover"
-                                  loading="lazy"
-                                />
-                                <div className="absolute inset-0 bg-black/10" />
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#2563EB] shadow-sm">
-                                    <Play className="h-4 w-4 fill-current" />
-                                  </div>
+                            <div className="relative h-20 w-32 flex-none overflow-hidden rounded-xl bg-[#EAF1FF]">
+                              <img
+                                src={
+                                  video.thumbnailUrl ||
+                                  `https://i.ytimg.com/vi/${video.videoId}/hqdefault.jpg`
+                                }
+                                alt={video.title}
+                                className="h-full w-full object-cover"
+                                loading="lazy"
+                              />
+                              <div className="absolute inset-0 bg-black/10" />
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#2563EB] shadow-sm">
+                                  <Play className="h-4 w-4 fill-current" />
                                 </div>
-                                {video.durationText ? (
-                                  <span className="absolute bottom-2 right-2 rounded bg-black/80 px-1.5 py-0.5 text-[11px] font-semibold text-white">
-                                    {video.durationText}
-                                  </span>
-                                ) : null}
                               </div>
-                              <div className="min-w-0">
-                                <p className="text-[11px] font-bold uppercase tracking-widest text-[#2563EB]">
-                                  YouTube Upload
+                              {video.durationText ? (
+                                <span className="absolute bottom-2 right-2 rounded bg-black/80 px-1.5 py-0.5 text-[11px] font-semibold text-white">
+                                  {video.durationText}
+                                </span>
+                              ) : null}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-[11px] font-bold uppercase tracking-widest text-[#2563EB]">
+                                YouTube Upload
+                              </p>
+                              <p className="mt-1 text-sm font-semibold leading-6 text-brand-ink">
+                                {video.title}
+                              </p>
+                              {video.metadataText ? (
+                                <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                                  {video.metadataText}
                                 </p>
-                                <p className="mt-1 text-sm font-semibold leading-6 text-brand-ink">
-                                  {video.title}
-                                </p>
-                                {video.metadataText ? (
-                                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                                    {video.metadataText}
-                                  </p>
-                                ) : null}
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
+                              ) : null}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
