@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { Edit, Plus, Search, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { Bold, Edit, Italic, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { AdminLayout } from "../components/AdminLayout";
 import { adminFetchFormData, deleteRecord, loadBlogs, resolveAdminMediaUrl } from "../api";
@@ -97,6 +97,7 @@ function BlogEditorDialog({
   const [file, setFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [slugTouched, setSlugTouched] = useState(false);
+  const contentRef = useRef<HTMLTextAreaElement | null>(null);
   const objectUrl = useObjectUrl(file);
 
   useEffect(() => {
@@ -127,6 +128,46 @@ function BlogEditorDialog({
   }, [open, item]);
 
   const previewSrc = objectUrl || resolveAdminMediaUrl(item?.featuredImage);
+
+  function wrapSelectedText(wrapper: string, placeholder: string) {
+    const textarea = contentRef.current;
+    if (!textarea) {
+      return;
+    }
+
+    const selectionStart = textarea.selectionStart ?? 0;
+    const selectionEnd = textarea.selectionEnd ?? 0;
+    const selectedLength = selectionEnd - selectionStart;
+    const insertedLength = selectedLength > 0 ? selectedLength : placeholder.length;
+
+    setForm((current) => {
+      const selectedText = current.fullContent.slice(selectionStart, selectionEnd);
+      const replacement = selectedText || placeholder;
+      const nextContent =
+        current.fullContent.slice(0, selectionStart) +
+        wrapper +
+        replacement +
+        wrapper +
+        current.fullContent.slice(selectionEnd);
+
+      return {
+        ...current,
+        fullContent: nextContent,
+      };
+    });
+
+    window.requestAnimationFrame(() => {
+      const nextTextarea = contentRef.current;
+      if (!nextTextarea) {
+        return;
+      }
+
+      const nextSelectionStart = selectionStart + wrapper.length;
+      const nextSelectionEnd = nextSelectionStart + insertedLength;
+      nextTextarea.focus();
+      nextTextarea.setSelectionRange(nextSelectionStart, nextSelectionEnd);
+    });
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -241,15 +282,45 @@ function BlogEditorDialog({
             </div>
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="blog-content">Full Content</Label>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="border-white/10 bg-white/5 text-white hover:bg-white hover:text-slate-950"
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => wrapSelectedText("**", "bold text")}
+                >
+                  <Bold className="mr-2 h-4 w-4" />
+                  Bold
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="border-white/10 bg-white/5 text-white hover:bg-white hover:text-slate-950"
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => wrapSelectedText("*", "italic text")}
+                >
+                  <Italic className="mr-2 h-4 w-4" />
+                  Italic
+                </Button>
+              </div>
               <Textarea
                 id="blog-content"
                 rows={8}
+                ref={contentRef}
                 value={form.fullContent}
                 onChange={(event) =>
                   setForm((prev) => ({ ...prev, fullContent: event.target.value }))
                 }
                 required
               />
+              <p className="text-xs text-slate-400">
+                Tip: select text and use the buttons, or type{" "}
+                <span className="font-mono">**bold**</span> and{" "}
+                <span className="font-mono">*italic*</span> directly.
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="blog-author">Author</Label>

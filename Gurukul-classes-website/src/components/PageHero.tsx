@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { ChevronRight } from "lucide-react";
 import { AppLink } from "@/components/AppLink";
 
@@ -12,7 +13,7 @@ export function PageHero({
   crumbs = [],
 }: {
   title: string;
-  subtitle?: string;
+  subtitle?: ReactNode;
   crumbs?: Crumb[];
 }) {
   return (

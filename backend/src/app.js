@@ -8,10 +8,17 @@ import { notFound, errorHandler } from "./middleware/error.js";
 import { adminAuthRouter } from "./routes/authRoutes.js";
 import { adminDashboardRouter } from "./routes/dashboardRoutes.js";
 import { publicHeroRouter, adminHeroRouter } from "./routes/heroRoutes.js";
-import { publicResultsRouter, adminResultsRouter } from "./routes/resultsRoutes.js";
-import { publicGalleryRouter, adminGalleryRouter } from "./routes/galleryRoutes.js";
+import {
+  publicResultsRouter,
+  adminResultsRouter,
+} from "./routes/resultsRoutes.js";
+import {
+  publicGalleryRouter,
+  adminGalleryRouter,
+} from "./routes/galleryRoutes.js";
 import { publicPressRouter, adminPressRouter } from "./routes/pressRoutes.js";
 import { publicBlogRouter, adminBlogRouter } from "./routes/blogRoutes.js";
+import { publicYoutubeRouter } from "./routes/youtubeRoutes.js";
 
 const allowedOrigins = new Set([
   FRONTEND_URL,
@@ -23,9 +30,11 @@ export function createApp(pool) {
   const app = express();
 
   app.locals.pool = pool;
-  app.use(helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" },
-  }));
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: "cross-origin" },
+    }),
+  );
   app.use(
     cors({
       origin(origin, callback) {
@@ -51,6 +60,7 @@ export function createApp(pool) {
   app.use("/api", publicGalleryRouter);
   app.use("/api", publicPressRouter);
   app.use("/api", publicBlogRouter);
+  app.use("/api", publicYoutubeRouter);
 
   app.use("/api/admin", adminAuthRouter);
   app.use("/api/admin", adminDashboardRouter);

@@ -1,6 +1,7 @@
 import { ArrowLeft, CalendarDays, Clock3 } from "lucide-react";
 import { AppLink } from "@/components/AppLink";
 import { PageHero } from "@/components/PageHero";
+import { renderInlineMarkdown } from "@/lib/inline-format";
 import type { BlogPost } from "@/data/blogs";
 
 type BlogDetailPageProps = {
@@ -13,7 +14,7 @@ export function BlogDetailPage({ post, relatedPosts }: BlogDetailPageProps) {
     <>
       <PageHero
         title={post.title}
-        subtitle={post.summary}
+        subtitle={renderInlineMarkdown(post.summary)}
         crumbs={[{ label: "Blog", to: "/blog" }, { label: post.title }]}
       />
 
@@ -49,12 +50,17 @@ export function BlogDetailPage({ post, relatedPosts }: BlogDetailPageProps) {
                 {post.title}
               </h1>
 
-              <p className="mt-5 text-lg leading-relaxed text-muted-foreground">{post.summary}</p>
+              <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
+                {renderInlineMarkdown(post.summary)}
+              </p>
 
               <div className="mt-8 space-y-5">
-                {post.body.map((paragraph) => (
-                  <p key={paragraph} className="leading-relaxed text-muted-foreground">
-                    {paragraph}
+                {post.body.map((paragraph, index) => (
+                  <p
+                    key={`${index}-${paragraph}`}
+                    className="leading-relaxed text-muted-foreground"
+                  >
+                    {renderInlineMarkdown(paragraph)}
                   </p>
                 ))}
               </div>
@@ -69,7 +75,7 @@ export function BlogDetailPage({ post, relatedPosts }: BlogDetailPageProps) {
                       key={item}
                       className="rounded-xl bg-white px-4 py-3 text-sm font-medium text-brand-ink shadow-soft"
                     >
-                      {item}
+                      {renderInlineMarkdown(item)}
                     </li>
                   ))}
                 </ul>
@@ -127,7 +133,7 @@ export function BlogDetailPage({ post, relatedPosts }: BlogDetailPageProps) {
                         {related.title}
                       </h3>
                       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                        {related.excerpt}
+                        {renderInlineMarkdown(related.excerpt)}
                       </p>
                     </div>
                   </AppLink>
