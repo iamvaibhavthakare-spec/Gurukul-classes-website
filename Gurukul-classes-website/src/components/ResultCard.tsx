@@ -36,7 +36,9 @@ export function ResultCard({ result, className }: { result: Result; className?: 
       <p className="mt-4 text-3xl font-extrabold leading-tight text-brand-ink md:text-[2.15rem]">
         {result.score}
       </p>
-      <p className="mt-2 text-sm text-muted-foreground">{result.description || result.college}</p>
+      <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+        {result.description || result.college}
+      </p>
     </div>
   );
 }

@@ -22,7 +22,7 @@ export function Videos() {
     {
       platform: "youtube" as const,
       title: "YouTube",
-      description: "Channel uploads, lectures and event videos.",
+      description: "Long-form lessons, event coverage and Shorts.",
       Icon: Youtube,
     },
   ];
@@ -36,7 +36,7 @@ export function Videos() {
       />
       <PageHero
         title="Social Wall"
-        subtitle="Open our latest Instagram, Facebook and YouTube updates in a full-screen embed."
+        subtitle="Open our latest Instagram, Facebook and YouTube uploads in a full-screen embed."
         crumbs={[{ label: "Videos" }]}
       />
       <section className="bg-white py-16">
@@ -46,7 +46,7 @@ export function Videos() {
               Watch Us On
             </span>
             <h2 className="mt-4 text-3xl font-bold tracking-tight md:text-5xl">
-              Latest updates without placeholder videos
+              Latest updates from the channels we actually post on
             </h2>
           </div>
 

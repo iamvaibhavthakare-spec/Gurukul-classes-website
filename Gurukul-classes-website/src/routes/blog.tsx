@@ -3,6 +3,7 @@ import { AppLink } from "@/components/AppLink";
 import { PageHero } from "@/components/PageHero";
 import { SectionTitle } from "@/components/SectionTitle";
 import { useBlogPosts } from "@/hooks/use-public-content";
+import { renderInlineMarkdown } from "@/lib/inline-format";
 
 export function Blog() {
   const { posts } = useBlogPosts();
@@ -51,7 +52,7 @@ export function Blog() {
                     {post.title}
                   </h3>
                   <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    {post.excerpt}
+                    {renderInlineMarkdown(post.excerpt)}
                   </p>
                   <span className="mt-5 inline-flex items-center gap-1 text-sm font-bold text-[#2563EB]">
                     Read article <ArrowRight className="h-4 w-4" />
