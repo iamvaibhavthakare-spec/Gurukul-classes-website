@@ -1,6 +1,22 @@
+declare global {
+  interface Window {
+    __GURUKUL_RUNTIME_CONFIG__?: {
+      apiBaseUrl?: string;
+    };
+  }
+}
+
+function readRuntimeApiBaseUrl() {
+  if (typeof window === "undefined") {
+    return "";
+  }
+  const value = window.__GURUKUL_RUNTIME_CONFIG__?.apiBaseUrl;
+  return typeof value === "string" ? value.trim() : "";
+}
+
 const RAW_API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.trim();
 export const API_BASE_URL =
-  RAW_API_BASE_URL || (import.meta.env.DEV ? "http://localhost:5000" : "");
+  RAW_API_BASE_URL || readRuntimeApiBaseUrl() || (import.meta.env.DEV ? "http://localhost:5000" : "");
 
 export function buildApiUrl(path: string) {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
@@ -33,6 +49,14 @@ export async function fetchJson<T>(path: string, init?: RequestInit): Promise<T>
   const contentType = response.headers.get("content-type") || "";
   const isJson = contentType.includes("application/json");
   const payload = isJson ? await response.json().catch(() => null) : await response.text();
+  const looksLikeHtml =
+    typeof payload === "string" && /<!doctype html|<html[\s>]/i.test(payload);
+
+  if (looksLikeHtml) {
+    throw new Error(
+      "API request reached the website HTML instead of the backend. Set /app-config.js apiBaseUrl to your backend URL.",
+    );
+  }
 
   if (!response.ok) {
     const message =
