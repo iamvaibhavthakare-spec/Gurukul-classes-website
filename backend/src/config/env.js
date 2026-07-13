@@ -16,3 +16,7 @@ export const DB_NAME = process.env.DB_NAME || "gurukul_classes";
 export const JWT_SECRET = process.env.JWT_SECRET || "gurukul_admin_secret";
 export const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 export const NODE_ENV = process.env.NODE_ENV || "development";
+export const DB_BOOTSTRAP =
+  process.env.DB_BOOTSTRAP != null
+    ? process.env.DB_BOOTSTRAP === "true"
+    : NODE_ENV !== "production";
