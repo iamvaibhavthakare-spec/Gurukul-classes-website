@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { DB_BOOTSTRAP, DB_NAME } from "../config/env.js";
+import { UPLOAD_ROOT } from "../config/paths.js";
 import { createPool, createRootConnection } from "../config/db.js";
 import { ensureUploadFolders } from "../utils/file.js";
 import {
@@ -317,15 +318,19 @@ async function seedData(pool) {
 }
 
 export async function initializeDatabase() {
-  ensureUploadFolders();
+  try {
+    ensureUploadFolders();
+  } catch (error) {
+    console.warn(
+      `Upload directory initialization failed at ${UPLOAD_ROOT}: ${error.message}`,
+    );
+  }
   const pool = createPool();
 
   if (DB_BOOTSTRAP) {
     await ensureDatabaseExists();
     await createTables(pool);
     await seedData(pool);
-  } else {
-    await pool.query("SELECT 1");
   }
 
   return pool;

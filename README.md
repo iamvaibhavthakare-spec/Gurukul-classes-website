@@ -32,12 +32,14 @@ Copy `backend/.env.example` to `backend/.env`.
 ```env
 PORT=5000
 DB_HOST=localhost
+DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=root
 DB_NAME=gurukul_classes
 JWT_SECRET=gurukul_admin_secret
 FRONTEND_URL=http://localhost:5173
 DB_BOOTSTRAP=true
+UPLOAD_ROOT=
 ```
 
 ### Frontend
@@ -163,6 +165,14 @@ npm run dev
 - The backend serves uploads from `http://localhost:5000/uploads/...`
 
 For production, use persistent storage for the `uploads` directory.
+
+## Hostinger Notes
+
+- Set `Gurukul-classes-website/public/app-config.js` or the live `/app-config.js` file to `https://api.gurukulclass.org`.
+- In the Hostinger Web App environment variables, do not force `PORT` unless Hostinger support explicitly requires it.
+- Use the exact MySQL hostname from hPanel Database details for `DB_HOST`; `127.0.0.1` is often wrong for Web App deployments.
+- Set `DB_BOOTSTRAP=false` if you already imported `backend/sql/schema.sql` and `backend/sql/seed.sql`.
+- Set `UPLOAD_ROOT` to a writable persistent path such as `/home/u811795688/gurukul-uploads`.
 
 ## Verification Commands
 
