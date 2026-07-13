@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
+import { ENV_FILE } from "./paths.js";
 
-dotenv.config();
+dotenv.config({ path: ENV_FILE });
 
 function readNumber(value, fallback) {
   const parsed = Number(value);

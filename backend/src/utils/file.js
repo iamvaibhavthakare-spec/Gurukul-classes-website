@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import multer from "multer";
+import { UPLOAD_ROOT } from "../config/paths.js";
 
-export const UPLOAD_ROOT = path.resolve(process.cwd(), "uploads");
 export const UPLOAD_PREFIX = "/uploads";
 
 const IMAGE_MIME_TYPES = new Set([
