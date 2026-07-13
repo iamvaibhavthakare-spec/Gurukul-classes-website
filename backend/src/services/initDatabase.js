@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { DB_NAME } from "../config/env.js";
+import { DB_BOOTSTRAP, DB_NAME } from "../config/env.js";
 import { createPool, createRootConnection } from "../config/db.js";
 import { ensureUploadFolders } from "../utils/file.js";
 import {
@@ -318,9 +318,15 @@ async function seedData(pool) {
 
 export async function initializeDatabase() {
   ensureUploadFolders();
-  await ensureDatabaseExists();
   const pool = createPool();
-  await createTables(pool);
-  await seedData(pool);
+
+  if (DB_BOOTSTRAP) {
+    await ensureDatabaseExists();
+    await createTables(pool);
+    await seedData(pool);
+  } else {
+    await pool.query("SELECT 1");
+  }
+
   return pool;
 }
