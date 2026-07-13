@@ -54,6 +54,7 @@ interface HeroFormState {
   buttonText: string;
   buttonLink: string;
   badge: string;
+  topperText: string;
   displayOrder: string;
   status: "active" | "inactive";
 }
@@ -65,6 +66,7 @@ const EMPTY_FORM: HeroFormState = {
   buttonText: "Enquire Now",
   buttonLink: "#enquire",
   badge: "",
+  topperText: "",
   displayOrder: "0",
   status: "active",
 };
@@ -96,6 +98,7 @@ function HeroEditorDialog({
               buttonText: item.buttonText || "",
               buttonLink: item.buttonLink || "",
               badge: item.badge || "",
+              topperText: item.topperText || "",
               displayOrder: String(item.displayOrder ?? 0),
               status: item.status,
             }
@@ -126,6 +129,7 @@ function HeroEditorDialog({
     payload.set("buttonText", form.buttonText);
     payload.set("buttonLink", form.buttonLink);
     payload.set("badge", form.badge);
+    payload.set("topperText", form.topperText);
     payload.set("displayOrder", form.displayOrder);
     payload.set("status", form.status);
     if (file) {
@@ -212,6 +216,17 @@ function HeroEditorDialog({
                 id="hero-badge"
                 value={form.badge}
                 onChange={(event) => setForm((prev) => ({ ...prev, badge: event.target.value }))}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="hero-topper-text">Topper Percentile Text</Label>
+              <Input
+                id="hero-topper-text"
+                value={form.topperText}
+                placeholder="99.87 %ile MH-CET"
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, topperText: event.target.value }))
+                }
               />
             </div>
             <div className="space-y-2">
@@ -306,7 +321,15 @@ export function AdminHeroPage() {
     return items.filter((item) => {
       const matchesSearch =
         !term ||
-        [item.title, item.subtitle, item.description, item.buttonText, item.buttonLink, item.badge]
+        [
+          item.title,
+          item.subtitle,
+          item.description,
+          item.buttonText,
+          item.buttonLink,
+          item.badge,
+          item.topperText,
+        ]
           .filter(Boolean)
           .some((value) => value.toLowerCase().includes(term));
       const matchesStatus = statusFilter === "all" || item.status === statusFilter;
@@ -340,6 +363,7 @@ export function AdminHeroPage() {
       payload.set("buttonText", item.buttonText);
       payload.set("buttonLink", item.buttonLink);
       payload.set("badge", item.badge || "");
+      payload.set("topperText", item.topperText || "");
       payload.set("displayOrder", String(item.displayOrder));
       payload.set("status", nextStatus);
       payload.set("existingBackgroundImage", item.backgroundImage);
@@ -461,6 +485,11 @@ export function AdminHeroPage() {
                             <p className="mt-1 line-clamp-2 text-sm text-slate-400">
                               {item.subtitle || item.description}
                             </p>
+                            {item.topperText ? (
+                              <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-sky-300">
+                                Topper: {item.topperText}
+                              </p>
+                            ) : null}
                           </div>
                         </TableCell>
                         <TableCell>

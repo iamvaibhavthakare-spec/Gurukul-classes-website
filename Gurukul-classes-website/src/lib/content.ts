@@ -15,6 +15,7 @@ export interface HeroSlide {
   description: string;
   image: string;
   badge?: string | null;
+  topperText?: string | null;
   buttonText: string;
   buttonLink: string;
   status?: string;
@@ -59,6 +60,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlide[] = [
     description: "Concept-first teaching, daily practice and real results - the Gurukul way.",
     image: heroClassroom,
     badge: "Admissions Open",
+    topperText: null,
     buttonText: "Enquire Now",
     buttonLink: "#enquire",
   },
@@ -68,6 +70,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlide[] = [
     description: "Integrated programs that balance HSC scores with Entrance excellence.",
     image: heroStudy,
     badge: "5 Branches",
+    topperText: "99.87 %ile MH-CET",
     buttonText: "Enquire Now",
     buttonLink: "#enquire",
   },
@@ -77,6 +80,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlide[] = [
     description: "A legacy of trust built by thousands of doctors, engineers and scientists.",
     image: heroStudents,
     badge: "10k+ Alumni",
+    topperText: null,
     buttonText: "Enquire Now",
     buttonLink: "#enquire",
   },
@@ -86,6 +90,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlide[] = [
     description: "Reserve your seat in our new academic session - limited capacity per batch.",
     image: aboutTeaching,
     badge: "Limited Seats",
+    topperText: null,
     buttonText: "Enquire Now",
     buttonLink: "#enquire",
   },
@@ -157,6 +162,7 @@ export function mapHeroRecord(record: {
   description: string;
   backgroundImage: string;
   badge?: string | null;
+  topperText?: string | null;
   buttonText: string;
   buttonLink: string;
   status?: string;
@@ -168,6 +174,7 @@ export function mapHeroRecord(record: {
     description: record.description,
     image: resolveMediaUrl(record.backgroundImage),
     badge: record.badge,
+    topperText: record.topperText,
     buttonText: record.buttonText,
     buttonLink: record.buttonLink,
     status: record.status,

@@ -5,6 +5,34 @@ import { publicUploadUrl } from "../utils/file.js";
 import { toHeroResponse } from "../utils/transformers.js";
 
 const heroIdSchema = z.coerce.number().int().positive();
+let ensureHeroTopperColumnPromise;
+
+async function ensureHeroTopperColumn(pool) {
+  if (!ensureHeroTopperColumnPromise) {
+    ensureHeroTopperColumnPromise = (async () => {
+      const [rows] = await pool.query(
+        `
+          SELECT COUNT(*) AS count
+          FROM INFORMATION_SCHEMA.COLUMNS
+          WHERE TABLE_SCHEMA = DATABASE()
+            AND TABLE_NAME = 'hero_sections'
+            AND COLUMN_NAME = 'topper_text'
+        `,
+      );
+
+      if (Number(rows?.[0]?.count || 0) === 0) {
+        await pool.query(
+          "ALTER TABLE hero_sections ADD COLUMN topper_text VARCHAR(160) NULL AFTER badge",
+        );
+      }
+    })().catch((error) => {
+      ensureHeroTopperColumnPromise = null;
+      throw error;
+    });
+  }
+
+  return ensureHeroTopperColumnPromise;
+}
 
 function heroInsertPayload(data, backgroundImage) {
   return {
@@ -15,6 +43,7 @@ function heroInsertPayload(data, backgroundImage) {
     button_link: data.buttonLink,
     background_image: backgroundImage,
     badge: asOptionalString(data.badge),
+    topper_text: asOptionalString(data.topperText),
     display_order: data.displayOrder,
     status: data.status,
   };
@@ -22,6 +51,7 @@ function heroInsertPayload(data, backgroundImage) {
 
 async function listHeroSections(req, res, includeInactive = false) {
   const pool = req.app.locals.pool;
+  await ensureHeroTopperColumn(pool);
   const [rows] = await pool.query(
     includeInactive
       ? "SELECT * FROM hero_sections ORDER BY display_order ASC, id ASC"
@@ -61,6 +91,7 @@ export async function createHeroSection(req, res, next) {
     }
 
     const pool = req.app.locals.pool;
+    await ensureHeroTopperColumn(pool);
     const payload = heroInsertPayload(parsed.data, publicUploadUrl(req.file.path));
     const [result] = await pool.query("INSERT INTO hero_sections SET ?", [payload]);
     const [rows] = await pool.query("SELECT * FROM hero_sections WHERE id = ?", [result.insertId]);
@@ -83,6 +114,7 @@ export async function updateHeroSection(req, res, next) {
     }
 
     const pool = req.app.locals.pool;
+    await ensureHeroTopperColumn(pool);
     const [existingRows] = await pool.query("SELECT * FROM hero_sections WHERE id = ? LIMIT 1", [heroId]);
     const existing = existingRows[0];
     if (!existing) {

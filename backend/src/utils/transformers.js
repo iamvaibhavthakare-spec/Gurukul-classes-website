@@ -11,6 +11,7 @@ export function toHeroResponse(row) {
     buttonLink: row.button_link,
     backgroundImage: row.background_image,
     badge: row.badge,
+    topperText: row.topper_text,
     displayOrder: row.display_order,
     status: row.status,
     createdAt: row.created_at,

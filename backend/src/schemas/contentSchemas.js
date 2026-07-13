@@ -9,6 +9,7 @@ export const heroSchema = z.object({
   buttonText: z.string().trim().min(1, "Button text is required."),
   buttonLink: z.string().trim().min(1, "Button link is required."),
   badge: z.string().trim().optional().nullable(),
+  topperText: z.string().trim().max(160).optional().nullable(),
   displayOrder: z.coerce.number().int().min(0).default(0),
   status: statusSchema,
 });

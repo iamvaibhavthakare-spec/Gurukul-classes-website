@@ -45,6 +45,7 @@ export function useHeroSlides() {
             buttonLink: string;
             backgroundImage: string;
             badge?: string | null;
+            topperText?: string | null;
             status?: string;
             displayOrder?: number;
           }>

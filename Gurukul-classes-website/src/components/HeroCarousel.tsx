@@ -106,10 +106,12 @@ export function HeroCarousel() {
                 className="h-[430px] w-full object-cover brightness-[0.94] saturate-[0.58]"
               />
             </div>
-            <div className="absolute -left-8 top-10 rounded-2xl glass-card px-5 py-4 text-sm font-bold text-brand-ink shadow-card animate-float">
-              <div className="text-brand-red text-xs uppercase tracking-wider">Topper</div>
-              99.87 %ile MH-CET
-            </div>
+            {slide?.topperText ? (
+              <div className="absolute -left-8 top-10 rounded-2xl glass-card px-5 py-4 text-sm font-bold text-brand-ink shadow-card animate-float">
+                <div className="text-brand-red text-xs uppercase tracking-wider">Topper</div>
+                {slide.topperText}
+              </div>
+            ) : null}
             <div
               className="absolute -right-6 bottom-16 rounded-2xl bg-brand-yellow px-5 py-4 text-sm font-bold text-brand-ink shadow-yellow animate-float"
               style={{ animationDelay: "1.2s" }}

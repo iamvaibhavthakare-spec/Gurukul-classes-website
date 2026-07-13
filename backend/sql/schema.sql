@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `hero_sections` (
   `button_link` VARCHAR(255) NOT NULL,
   `background_image` VARCHAR(255) NOT NULL,
   `badge` VARCHAR(120) NULL,
+  `topper_text` VARCHAR(160) NULL,
   `display_order` INT NOT NULL DEFAULT 0,
   `status` ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

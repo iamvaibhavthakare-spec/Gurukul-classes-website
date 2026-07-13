@@ -34,6 +34,7 @@ export interface HeroSectionRecord {
   buttonLink: string;
   backgroundImage: string;
   badge?: string | null;
+  topperText?: string | null;
   displayOrder: number;
   status: "active" | "inactive";
   createdAt?: string;

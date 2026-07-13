@@ -2,12 +2,12 @@ INSERT INTO `admins` (`name`, `email`, `password_hash`, `role`, `status`)
 SELECT 'Admin', 'admin@gurukulclasses.com', '$2a$10$B/oz4Axmx/qSQ7pjKs.SJu5AsKBBppt33Y9hp/bDAfgHhs.yIUTLW', 'superadmin', 'active'
 WHERE NOT EXISTS (SELECT 1 FROM `admins` LIMIT 1);
 
-INSERT INTO `hero_sections` (`title`, `subtitle`, `description`, `button_text`, `button_link`, `background_image`, `badge`, `display_order`, `status`)
+INSERT INTO `hero_sections` (`title`, `subtitle`, `description`, `button_text`, `button_link`, `background_image`, `badge`, `topper_text`, `display_order`, `status`)
 SELECT * FROM (
-  SELECT 'IIT-JEE | Medical | Foundation Coaching' AS `title`, 'Since 2000' AS `subtitle`, 'Concept-first teaching, daily practice and real results - the Gurukul way.' AS `description`, 'Enquire Now' AS `button_text`, '#enquire' AS `button_link`, '/uploads/seed/hero-classroom.jpg' AS `background_image`, 'Admissions Open' AS `badge`, 1 AS `display_order`, 'active' AS `status`
-  UNION ALL SELECT 'NEET, MH-CET & IIT-JEE Preparation in Kalyan and Bhiwandi', 'Top results year after year', 'Integrated programs that balance HSC scores with Entrance excellence.', 'Enquire Now', '#enquire', '/uploads/seed/hero-study.jpg', '5 Branches', 2, 'active'
-  UNION ALL SELECT '10,000+ Successful Students & 6,000+ in Top Colleges', 'Proven track record', 'A legacy of trust built by thousands of doctors, engineers and scientists.', 'Enquire Now', '#enquire', '/uploads/seed/hero-students.jpg', '10k+ Alumni', 3, 'active'
-  UNION ALL SELECT 'Admissions Open for VIII, IX, X, XI & XII Science', '2026 batches', 'Reserve your seat in our new academic session - limited capacity per batch.', 'Enquire Now', '#enquire', '/uploads/seed/about-teaching.jpg', 'Limited Seats', 4, 'active'
+  SELECT 'IIT-JEE | Medical | Foundation Coaching' AS `title`, 'Since 2000' AS `subtitle`, 'Concept-first teaching, daily practice and real results - the Gurukul way.' AS `description`, 'Enquire Now' AS `button_text`, '#enquire' AS `button_link`, '/uploads/seed/hero-classroom.jpg' AS `background_image`, 'Admissions Open' AS `badge`, NULL AS `topper_text`, 1 AS `display_order`, 'active' AS `status`
+  UNION ALL SELECT 'NEET, MH-CET & IIT-JEE Preparation in Kalyan and Bhiwandi', 'Top results year after year', 'Integrated programs that balance HSC scores with Entrance excellence.', 'Enquire Now', '#enquire', '/uploads/seed/hero-study.jpg', '5 Branches', '99.87 %ile MH-CET', 2, 'active'
+  UNION ALL SELECT '10,000+ Successful Students & 6,000+ in Top Colleges', 'Proven track record', 'A legacy of trust built by thousands of doctors, engineers and scientists.', 'Enquire Now', '#enquire', '/uploads/seed/hero-students.jpg', '10k+ Alumni', NULL, 3, 'active'
+  UNION ALL SELECT 'Admissions Open for VIII, IX, X, XI & XII Science', '2026 batches', 'Reserve your seat in our new academic session - limited capacity per batch.', 'Enquire Now', '#enquire', '/uploads/seed/about-teaching.jpg', 'Limited Seats', NULL, 4, 'active'
 ) AS seed_rows WHERE NOT EXISTS (SELECT 1 FROM `hero_sections` LIMIT 1);
 
 INSERT INTO `results` (`student_name`, `exam_type`, `exam_label`, `result_value`, `year`, `student_photo`, `description`, `display_order`, `status`)
