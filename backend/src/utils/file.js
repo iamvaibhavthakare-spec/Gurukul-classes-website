@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import multer from "multer";
-import { UPLOAD_ROOT } from "../config/paths.js";
+import { BUNDLED_UPLOAD_ROOT, UPLOAD_ROOT } from "../config/paths.js";
 
 export const UPLOAD_PREFIX = "/uploads";
 
@@ -28,6 +28,30 @@ export function ensureUploadFolders() {
   ["seed", "hero", "results", "gallery", "press", "blogs"].forEach((folder) => {
     fs.mkdirSync(path.join(UPLOAD_ROOT, folder), { recursive: true });
   });
+}
+
+export function ensureBundledSeedAssets() {
+  const sourceRoot = path.join(BUNDLED_UPLOAD_ROOT, "seed");
+  const targetRoot = path.join(UPLOAD_ROOT, "seed");
+  if (!fs.existsSync(sourceRoot)) {
+    return;
+  }
+
+  if (path.resolve(sourceRoot) === path.resolve(targetRoot)) {
+    return;
+  }
+
+  fs.mkdirSync(targetRoot, { recursive: true });
+  for (const entry of fs.readdirSync(sourceRoot, { withFileTypes: true })) {
+    if (!entry.isFile()) {
+      continue;
+    }
+    const sourceFile = path.join(sourceRoot, entry.name);
+    const targetFile = path.join(targetRoot, entry.name);
+    if (!fs.existsSync(targetFile)) {
+      fs.copyFileSync(sourceFile, targetFile);
+    }
+  }
 }
 
 function safeFileName(fileName) {

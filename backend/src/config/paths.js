@@ -6,6 +6,7 @@ const currentFile = fileURLToPath(import.meta.url);
 const currentDir = path.dirname(currentFile);
 
 export const BACKEND_ROOT = path.resolve(currentDir, "../..");
+export const BUNDLED_UPLOAD_ROOT = path.join(BACKEND_ROOT, "uploads");
 const runtimeHome =
   process.env.HOME || process.env.USERPROFILE || os.tmpdir();
 const defaultUploadRoot =

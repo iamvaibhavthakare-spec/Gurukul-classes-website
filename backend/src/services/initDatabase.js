@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import { DB_BOOTSTRAP, DB_NAME } from "../config/env.js";
 import { UPLOAD_ROOT } from "../config/paths.js";
 import { createPool, createRootConnection } from "../config/db.js";
-import { ensureUploadFolders } from "../utils/file.js";
+import { ensureBundledSeedAssets, ensureUploadFolders } from "../utils/file.js";
 import {
   blogs,
   defaultAdmin,
@@ -320,6 +320,7 @@ async function seedData(pool) {
 export async function initializeDatabase() {
   try {
     ensureUploadFolders();
+    ensureBundledSeedAssets();
   } catch (error) {
     console.warn(
       `Upload directory initialization failed at ${UPLOAD_ROOT}: ${error.message}`,
