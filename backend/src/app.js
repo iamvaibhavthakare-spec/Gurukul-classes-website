@@ -4,6 +4,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import { FRONTEND_URL, NODE_ENV } from "./config/env.js";
+import { UPLOAD_ROOT } from "./config/paths.js";
 import { notFound, errorHandler } from "./middleware/error.js";
 import { adminAuthRouter } from "./routes/authRoutes.js";
 import { adminDashboardRouter } from "./routes/dashboardRoutes.js";
@@ -49,7 +50,7 @@ export function createApp(pool) {
   app.use(express.json({ limit: "2mb" }));
   app.use(express.urlencoded({ extended: true, limit: "2mb" }));
   app.use(morgan(NODE_ENV === "development" ? "dev" : "combined"));
-  app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads")));
+  app.use("/uploads", express.static(UPLOAD_ROOT));
 
   app.get("/api/health", (_req, res) => {
     res.json({ ok: true });

@@ -1,9 +1,3 @@
-CREATE DATABASE IF NOT EXISTS `gurukul_classes`
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-
-USE `gurukul_classes`;
-
 CREATE TABLE IF NOT EXISTS `admins` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(120) NOT NULL,

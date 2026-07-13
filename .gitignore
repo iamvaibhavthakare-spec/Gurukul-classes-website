@@ -12,3 +12,4 @@ backend/uploads/*
 !backend/uploads/seed/**
 Gurukul-classes-website/node_modules
 Gurukul-classes-website/dist
+hostinger-upload-*

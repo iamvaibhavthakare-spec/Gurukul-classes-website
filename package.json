@@ -9,6 +9,7 @@
     "dev": "concurrently -k -n backend,frontend -c green,blue \"npm --workspace ./backend run dev\" \"npm --workspace ./Gurukul-classes-website run dev\"",
     "dev:backend": "npm --workspace ./backend run dev",
     "dev:frontend": "npm --workspace ./Gurukul-classes-website run dev",
+    "build:backend": "node -e \"console.log('Backend build not required')\"",
     "build": "npm --workspace ./Gurukul-classes-website run build",
     "lint": "npm --workspace ./Gurukul-classes-website run lint"
   },
