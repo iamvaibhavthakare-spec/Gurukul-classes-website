@@ -4,7 +4,7 @@ This workspace now contains:
 
 - the existing public React site in `Gurukul-classes-website`
 - a new Express + MySQL backend in `backend`
-- a complete admin panel mounted at `/admin`
+- a complete admin panel mounted at `/gurukul-classes/myadmin`
 - MySQL schema and seed exports in `backend/sql`
 
 ## Stack
@@ -67,7 +67,7 @@ npm run dev
 
 ## Admin Access
 
-- URL: `http://localhost:5173/admin/login`
+- URL: `http://localhost:5173/gurukul-classes/myadmin/login`
 - Email: `admin@gurukulclasses.com`
 - Password: `admin123`
 

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAdminSession } from "../AdminSession";
+import { adminPath } from "../routes";
 import { toast } from "sonner";
 
 export function AdminLoginPage() {
@@ -19,7 +20,7 @@ export function AdminLoginPage() {
     try {
       await login(email, password);
       toast.success("Logged in successfully");
-      navigate("/admin");
+      navigate(adminPath());
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Login failed");
     } finally {

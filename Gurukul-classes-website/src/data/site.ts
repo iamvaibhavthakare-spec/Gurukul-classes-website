@@ -25,7 +25,7 @@ export const SITE = {
   socials: {
     facebook: "https://www.facebook.com/GurukulScienceClasses",
     instagram: "https://www.instagram.com/gurukulscienceclasses/",
-    youtube: "https://www.youtube.com/@gurukulscienceclasses1866",
+    youtube: "https://www.youtube.com/channel/UCYw9gJ0BXaDf-99wq2E83Hg",
   },
 };
 
@@ -95,7 +95,7 @@ export const BRANCHES: Branch[] = [
     name: "Anjurphata Branch",
     area: "Bhiwandi",
     address:
-      "Shop No. 12, Ground Floor, Atlanta Luxuria, Opp. Oswal College & School, Kamatghar Road, Anjurphata, Bhiwandi",
+      "1st Floor, Shalibhadra Apartment, Opposite Oswal School, Station Road, Anjurphata, Bhiwandi - 421302",
     phone: "+91 9833866464",
     phoneRaw: "+919833866464",
     mapUrl: "https://goo.gl/maps/HS1TZmx1igrfkaLi7",

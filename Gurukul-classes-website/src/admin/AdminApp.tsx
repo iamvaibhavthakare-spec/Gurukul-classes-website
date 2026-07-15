@@ -8,16 +8,23 @@ import { AdminResultsPage } from "./pages/AdminResultsPage";
 import { AdminGalleryPage } from "./pages/AdminGalleryPage";
 import { AdminPressReleasePage } from "./pages/AdminPressReleasePage";
 import { AdminBlogPage } from "./pages/AdminBlogPage";
+import { adminPath, normalizeAdminPath, replaceAdminPath } from "./routes";
 
 function AdminRoute() {
   const { admin, ready } = useAdminSession();
   const pathname = window.location.pathname;
+  const normalizedPath = normalizeAdminPath(pathname);
 
   useEffect(() => {
-    if (ready && admin && pathname === "/admin/login") {
-      navigate("/admin");
+    if (pathname !== normalizedPath) {
+      replaceAdminPath(normalizedPath);
+      return;
     }
-  }, [ready, admin, pathname]);
+
+    if (ready && admin && normalizedPath === adminPath("login")) {
+      navigate(adminPath());
+    }
+  }, [ready, admin, pathname, normalizedPath]);
 
   if (!ready) {
     return (
@@ -29,26 +36,26 @@ function AdminRoute() {
     );
   }
 
-  if (!admin || pathname === "/admin/login") {
+  if (!admin || normalizedPath === adminPath("login")) {
     return <AdminLoginPage />;
   }
 
-  if (pathname === "/admin" || pathname === "/admin/dashboard") {
+  if (normalizedPath === adminPath() || normalizedPath === adminPath("dashboardAlias")) {
     return <AdminDashboardPage />;
   }
-  if (pathname === "/admin/hero") {
+  if (normalizedPath === adminPath("hero")) {
     return <AdminHeroPage />;
   }
-  if (pathname === "/admin/results") {
+  if (normalizedPath === adminPath("results")) {
     return <AdminResultsPage />;
   }
-  if (pathname === "/admin/gallery") {
+  if (normalizedPath === adminPath("gallery")) {
     return <AdminGalleryPage />;
   }
-  if (pathname === "/admin/press-releases") {
+  if (normalizedPath === adminPath("pressReleases")) {
     return <AdminPressReleasePage />;
   }
-  if (pathname === "/admin/blogs") {
+  if (normalizedPath === adminPath("blogs")) {
     return <AdminBlogPage />;
   }
 
@@ -60,7 +67,7 @@ function AdminRoute() {
         <p className="mt-3 text-sm text-slate-400">The requested admin page does not exist.</p>
         <button
           className="mt-6 rounded-xl bg-white px-5 py-3 text-sm font-bold text-slate-950"
-          onClick={() => navigate("/admin")}
+          onClick={() => navigate(adminPath())}
         >
           Back to dashboard
         </button>

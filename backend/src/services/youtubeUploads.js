@@ -1,16 +1,54 @@
 const DEFAULT_YOUTUBE_CHANNEL_VIDEOS_URL =
-  "https://www.youtube.com/@gurukulscienceclasses1866/videos";
+  "https://www.youtube.com/channel/UCYw9gJ0BXaDf-99wq2E83Hg/videos";
 const YOUTUBE_CHANNEL_VIDEOS_URL =
   process.env.YOUTUBE_CHANNEL_VIDEOS_URL?.trim() ||
   DEFAULT_YOUTUBE_CHANNEL_VIDEOS_URL;
+const YOUTUBE_PLAYLIST_URL_PREFIX = "https://www.youtube.com/playlist?list=";
 const YOUTUBE_FEED_URL_PREFIX =
   "https://www.youtube.com/feeds/videos.xml?channel_id=";
 const CACHE_TTL_MS = 5 * 60 * 1000;
 const MAX_PAGE_FETCHES = 100;
 const MAX_LIMIT = 500;
 
-let cachedUploads = null;
-let cachedAt = 0;
+const uploadsCache = new Map();
+
+function resolveChannelVideosUrl(channelVideosUrl) {
+  return channelVideosUrl?.trim() || YOUTUBE_CHANNEL_VIDEOS_URL;
+}
+
+function extractChannelIdFromUrl(url) {
+  if (!url) {
+    return null;
+  }
+
+  try {
+    const parsedUrl = new URL(url);
+    const channelIdFromPath = parsedUrl.pathname.match(
+      /\/channel\/(UC[a-zA-Z0-9_-]+)/,
+    )?.[1];
+
+    if (channelIdFromPath) {
+      return channelIdFromPath;
+    }
+
+    const playlistId = parsedUrl.searchParams.get("list");
+    if (playlistId?.startsWith("UU") && playlistId.length > 2) {
+      return `UC${playlistId.slice(2)}`;
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
+function buildUploadsPlaylistUrl(channelId) {
+  if (!channelId?.startsWith("UC") || channelId.length <= 2) {
+    return null;
+  }
+
+  return `${YOUTUBE_PLAYLIST_URL_PREFIX}UU${channelId.slice(2)}`;
+}
 
 function decodeHtmlEntities(value) {
   return String(value)
@@ -104,6 +142,10 @@ function collectLockupViewModels(node, items = []) {
 
   if (node.richItemRenderer?.content?.lockupViewModel) {
     items.push(node.richItemRenderer.content.lockupViewModel);
+  }
+
+  if (node.lockupViewModel) {
+    items.push(node.lockupViewModel);
   }
 
   for (const value of Object.values(node)) {
@@ -281,66 +323,22 @@ function parseFeedXml(xml) {
   return uploads;
 }
 
-async function fetchYoutubeHtml() {
-  const response = await fetch(YOUTUBE_CHANNEL_VIDEOS_URL, {
+async function fetchYoutubeHtml(channelVideosUrl) {
+  const response = await fetch(resolveChannelVideosUrl(channelVideosUrl), {
     headers: {
       "user-agent": "Mozilla/5.0",
     },
   });
 
   if (!response.ok) {
-    throw new Error(
-      `Failed to load YouTube channel page (${response.status}).`,
-    );
+    throw new Error(`Failed to load YouTube page (${response.status}).`);
   }
 
   return response.text();
 }
 
-async function fetchYoutubeContinuation({
-  apiKey,
-  clientName,
-  clientVersion,
-  visitorData,
-  token,
-}) {
-  const response = await fetch(
-    `https://www.youtube.com/youtubei/v1/browse?key=${apiKey}`,
-    {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "user-agent": "Mozilla/5.0",
-        "x-youtube-client-name": String(clientName),
-        "x-youtube-client-version": clientVersion,
-        ...(visitorData ? { "x-goog-visitor-id": visitorData } : {}),
-      },
-      body: JSON.stringify({
-        context: {
-          client: {
-            clientName,
-            clientVersion,
-            hl: "en",
-            gl: "IN",
-            ...(visitorData ? { visitorData } : {}),
-          },
-        },
-        continuation: token,
-      }),
-    },
-  );
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to load YouTube continuation (${response.status}).`,
-    );
-  }
-
-  return response.json();
-}
-
-async function loadUploadsFromYoutube() {
-  const html = await fetchYoutubeHtml();
+async function loadUploadsFromPage(pageUrl, prefetchedHtml) {
+  const html = prefetchedHtml || (await fetchYoutubeHtml(pageUrl));
   const initialData = extractInitialData(html);
   const clientConfig = extractClientConfig(html, initialData);
 
@@ -393,11 +391,107 @@ async function loadUploadsFromYoutube() {
     enqueueTokens(responseJson);
   }
 
-  return uploads;
+  return { uploads, initialData, html };
 }
 
-async function fetchFallbackUploads() {
-  const html = await fetchYoutubeHtml();
+async function fetchYoutubeContinuation({
+  apiKey,
+  clientName,
+  clientVersion,
+  visitorData,
+  token,
+}) {
+  const response = await fetch(
+    `https://www.youtube.com/youtubei/v1/browse?key=${apiKey}`,
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "user-agent": "Mozilla/5.0",
+        "x-youtube-client-name": String(clientName),
+        "x-youtube-client-version": clientVersion,
+        ...(visitorData ? { "x-goog-visitor-id": visitorData } : {}),
+      },
+      body: JSON.stringify({
+        context: {
+          client: {
+            clientName,
+            clientVersion,
+            hl: "en",
+            gl: "IN",
+            ...(visitorData ? { visitorData } : {}),
+          },
+        },
+        continuation: token,
+      }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to load YouTube continuation (${response.status}).`,
+    );
+  }
+
+  return response.json();
+}
+
+async function loadUploadsFromYoutube(channelVideosUrl) {
+  const resolvedChannelVideosUrl = resolveChannelVideosUrl(channelVideosUrl);
+  const directChannelId = extractChannelIdFromUrl(resolvedChannelVideosUrl);
+  const uploadsPlaylistUrl = buildUploadsPlaylistUrl(directChannelId);
+
+  if (uploadsPlaylistUrl) {
+    try {
+      const playlistResult = await loadUploadsFromPage(uploadsPlaylistUrl);
+      if (playlistResult.uploads.length > 0) {
+        return playlistResult.uploads;
+      }
+    } catch {
+      // Fall back to the channel page below if the playlist page changes.
+    }
+  }
+
+  const channelPageResult = await loadUploadsFromPage(resolvedChannelVideosUrl);
+  const detectedChannelId =
+    directChannelId || extractChannelId(channelPageResult.initialData, channelPageResult.html);
+  const detectedUploadsPlaylistUrl = buildUploadsPlaylistUrl(detectedChannelId);
+
+  if (
+    detectedUploadsPlaylistUrl &&
+    detectedUploadsPlaylistUrl !== uploadsPlaylistUrl
+  ) {
+    try {
+      const playlistResult = await loadUploadsFromPage(detectedUploadsPlaylistUrl);
+      if (playlistResult.uploads.length > 0) {
+        return playlistResult.uploads;
+      }
+    } catch {
+      // Keep the already parsed channel-page uploads if this follow-up request fails.
+    }
+  }
+
+  return channelPageResult.uploads;
+}
+
+async function fetchFallbackUploads(channelVideosUrl) {
+  const directChannelId = extractChannelIdFromUrl(channelVideosUrl);
+
+  if (directChannelId) {
+    const response = await fetch(`${YOUTUBE_FEED_URL_PREFIX}${directChannelId}`, {
+      headers: {
+        "user-agent": "Mozilla/5.0",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to load YouTube feed (${response.status}).`);
+    }
+
+    return parseFeedXml(await response.text());
+  }
+
+  const html = await fetchYoutubeHtml(channelVideosUrl);
   const initialData = extractInitialData(html);
   const channelId = extractChannelId(initialData, html);
 
@@ -434,27 +528,31 @@ function applyLimit(items, limit) {
   return Number.isFinite(limit) ? items.slice(0, limit) : items;
 }
 
-export async function loadYoutubeUploads(limit) {
+export async function loadYoutubeUploads(limit, channelVideosUrl) {
   const safeLimit = normalizeLimit(limit);
+  const resolvedChannelVideosUrl = resolveChannelVideosUrl(channelVideosUrl);
   const now = Date.now();
+  const cachedEntry = uploadsCache.get(resolvedChannelVideosUrl);
 
-  if (cachedUploads && now - cachedAt < CACHE_TTL_MS) {
-    return applyLimit(cachedUploads, safeLimit);
+  if (cachedEntry && now - cachedEntry.cachedAt < CACHE_TTL_MS) {
+    return applyLimit(cachedEntry.uploads, safeLimit);
   }
 
   try {
-    let uploads = await loadUploadsFromYoutube();
+    let uploads = await loadUploadsFromYoutube(resolvedChannelVideosUrl);
 
     if (uploads.length === 0) {
-      uploads = await fetchFallbackUploads();
+      uploads = await fetchFallbackUploads(resolvedChannelVideosUrl);
     }
 
-    cachedUploads = uploads;
-    cachedAt = now;
+    uploadsCache.set(resolvedChannelVideosUrl, {
+      uploads,
+      cachedAt: now,
+    });
     return applyLimit(uploads, safeLimit);
   } catch (error) {
-    if (cachedUploads) {
-      return applyLimit(cachedUploads, safeLimit);
+    if (cachedEntry) {
+      return applyLimit(cachedEntry.uploads, safeLimit);
     }
 
     throw error;

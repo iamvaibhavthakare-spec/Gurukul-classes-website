@@ -158,7 +158,7 @@ function HeroEditorDialog({
         </DialogHeader>
 
         <form className="space-y-5" onSubmit={handleSubmit}>
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="hero-title">Title</Label>
               <Input
@@ -168,7 +168,7 @@ function HeroEditorDialog({
                 required
               />
             </div>
-            <div className="space-y-2 md:col-span-2">
+            <div className="space-y-2 md:col-span-2 xl:col-span-3">
               <Label htmlFor="hero-subtitle">Subtitle</Label>
               <Input
                 id="hero-subtitle"
@@ -176,7 +176,7 @@ function HeroEditorDialog({
                 onChange={(event) => setForm((prev) => ({ ...prev, subtitle: event.target.value }))}
               />
             </div>
-            <div className="space-y-2 md:col-span-2">
+            <div className="space-y-2 md:col-span-2 xl:col-span-3">
               <Label htmlFor="hero-description">Description</Label>
               <Textarea
                 id="hero-description"
@@ -219,11 +219,11 @@ function HeroEditorDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="hero-topper-text">Topper Percentile Text</Label>
+              <Label htmlFor="hero-topper-text">Ranking / Percentile Text</Label>
               <Input
                 id="hero-topper-text"
                 value={form.topperText}
-                placeholder="99.87 %ile MH-CET"
+                placeholder="AIR 2184 or 99.87 %ile MH-CET"
                 onChange={(event) =>
                   setForm((prev) => ({ ...prev, topperText: event.target.value }))
                 }

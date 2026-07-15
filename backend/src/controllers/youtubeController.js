@@ -3,6 +3,7 @@ import { loadYoutubeUploads } from "../services/youtubeUploads.js";
 
 const youtubeQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(500).optional(),
+  channelUrl: z.string().trim().url().optional(),
 });
 
 export async function getYoutubeUploads(req, res, next) {
@@ -15,7 +16,10 @@ export async function getYoutubeUploads(req, res, next) {
       });
     }
 
-    const uploads = await loadYoutubeUploads(parsed.data.limit);
+    const uploads = await loadYoutubeUploads(
+      parsed.data.limit,
+      parsed.data.channelUrl,
+    );
     return res.json(uploads);
   } catch (error) {
     return next(error);

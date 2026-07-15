@@ -13,14 +13,15 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { useAdminSession } from "../AdminSession";
+import { adminPath } from "../routes";
 
 const NAV_ITEMS = [
-  { label: "Dashboard", to: "/admin", icon: LayoutDashboard },
-  { label: "Hero Banners", to: "/admin/hero", icon: ImageIcon },
-  { label: "Results", to: "/admin/results", icon: Award },
-  { label: "Gallery", to: "/admin/gallery", icon: ImageIcon },
-  { label: "Press Releases", to: "/admin/press-releases", icon: ScrollText },
-  { label: "Blogs", to: "/admin/blogs", icon: BookOpenText },
+  { label: "Dashboard", to: adminPath(), icon: LayoutDashboard },
+  { label: "Hero Banners", to: adminPath("hero"), icon: ImageIcon },
+  { label: "Results", to: adminPath("results"), icon: Award },
+  { label: "Gallery", to: adminPath("gallery"), icon: ImageIcon },
+  { label: "Press Releases", to: adminPath("pressReleases"), icon: ScrollText },
+  { label: "Blogs", to: adminPath("blogs"), icon: BookOpenText },
 ];
 
 function NavList({ onNavigate }: { onNavigate?: () => void }) {

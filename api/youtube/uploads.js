@@ -26,9 +26,10 @@ export default {
 
     const url = new URL(request.url);
     const limit = parseLimit(url.searchParams.get("limit"));
+    const channelUrl = url.searchParams.get("channelUrl")?.trim() || undefined;
 
     try {
-      const uploads = await loadYoutubeUploads(limit);
+      const uploads = await loadYoutubeUploads(limit, channelUrl);
       return new Response(JSON.stringify(uploads), {
         headers: {
           "content-type": "application/json; charset=utf-8",

@@ -26,6 +26,7 @@ import { CourseXSscCbse } from "@/routes/courses.x-ssc-cbse";
 import { CourseXiScience } from "@/routes/courses.xi-science";
 import { CourseXiiScience } from "@/routes/courses.xii-science";
 import { AdminApp } from "@/admin/AdminApp";
+import { isAdminPath } from "@/admin/routes";
 
 const PUBLIC_ROUTES: Record<string, { title: string; Component: () => JSX.Element }> = {
   "/": { title: "Gurukul Science Classes - IIT-JEE, NEET, MH-CET Coaching", Component: Home },
@@ -74,7 +75,7 @@ const PUBLIC_ROUTES: Record<string, { title: string; Component: () => JSX.Elemen
 };
 
 function resolveRoute(pathname: string) {
-  if (pathname.startsWith("/admin")) {
+  if (isAdminPath(pathname)) {
     return {
       title: "Admin Panel - Gurukul Science Classes",
       Component: AdminApp,

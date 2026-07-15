@@ -1,7 +1,7 @@
 import { Play, X } from "lucide-react";
 import { createPortal } from "react-dom";
 import { useEffect, useState } from "react";
-import { safeFetchJson } from "@/lib/api";
+import { fetchJson } from "@/lib/api";
 import { SITE } from "@/data/site";
 
 export type SocialPlatform = "instagram" | "facebook" | "youtube";
@@ -34,68 +34,79 @@ type YoutubeUpload = {
 // Keep a small fallback so the YouTube tab still shows content when the API is unavailable.
 const DEFAULT_YOUTUBE_UPLOADS: YoutubeUpload[] = [
   {
-    videoId: "0H8DY7-Ncso",
-    title: "Latest Gurukul Short 1",
-    thumbnailUrl: "https://i.ytimg.com/vi/0H8DY7-Ncso/hqdefault.jpg",
-    durationText: null,
-    metadataText: "Published June 5, 2026",
-    watchUrl: "https://www.youtube.com/watch?v=0H8DY7-Ncso",
+    videoId: "hexPebpYwDw",
+    title:
+      "MHT-CET में 99% tile कैसे हासिल की? | राज अनिल यादव की सफलता की कहानी | गुरुकुल साइंस क्लासेस",
+    thumbnailUrl:
+      "https://i.ytimg.com/vi/hexPebpYwDw/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBIFQcQHFtgy1JBRef8OiZOvjeY-A",
+    durationText: "3:16",
+    metadataText: "129 views | 4 days ago",
+    watchUrl: "https://www.youtube.com/watch?v=hexPebpYwDw",
   },
   {
-    videoId: "pWsVfXppLXc",
-    title: "Latest Gurukul Short 2",
-    thumbnailUrl: "https://i.ytimg.com/vi/pWsVfXppLXc/hqdefault.jpg",
-    durationText: null,
-    metadataText: "Published June 4, 2026",
-    watchUrl: "https://www.youtube.com/watch?v=pWsVfXppLXc",
+    videoId: "CRjYzKX_UIE",
+    title: "सही Guidance ने बदली ज़िंदगी | MHT CET Success Story | Gurukul Science Classes",
+    thumbnailUrl:
+      "https://i.ytimg.com/vi/CRjYzKX_UIE/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCmaz2GICYwYFxV83vfcWSUBFkOsA",
+    durationText: "2:42",
+    metadataText: "23 views | 6 days ago",
+    watchUrl: "https://www.youtube.com/watch?v=CRjYzKX_UIE",
   },
   {
-    videoId: "D4QlUy1TWOk",
-    title: "Latest Gurukul Short 3",
-    thumbnailUrl: "https://i.ytimg.com/vi/D4QlUy1TWOk/hqdefault.jpg",
-    durationText: null,
-    metadataText: "Published June 3, 2026",
-    watchUrl: "https://www.youtube.com/watch?v=D4QlUy1TWOk",
+    videoId: "VTz5SLnSP1s",
+    title: "मुलांचे यश आणि पालकांचा सार्थ अभिमान! | Gurukul Science Classes",
+    thumbnailUrl:
+      "https://i.ytimg.com/vi/VTz5SLnSP1s/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLD0dG7__S9z4at8PCzUhXWIeiYGvQ",
+    durationText: "6:30",
+    metadataText: "376 views | 2 months ago",
+    watchUrl: "https://www.youtube.com/watch?v=VTz5SLnSP1s",
   },
   {
-    videoId: "xNq0QPMeEUU",
-    title: "Latest Gurukul Short 4",
-    thumbnailUrl: "https://i.ytimg.com/vi/xNq0QPMeEUU/hqdefault.jpg",
-    durationText: null,
-    metadataText: "Published June 2, 2026",
-    watchUrl: "https://www.youtube.com/watch?v=xNq0QPMeEUU",
+    videoId: "JLph_KqMtWk",
+    title: "इथे फक्त मार्गदर्शन नाही, तर प्रोत्साहन देखील दिले जाते– प्रणव पाटीलचा प्रवास",
+    thumbnailUrl:
+      "https://i.ytimg.com/vi/JLph_KqMtWk/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAW-8NxMOmUtI5gb4FgXyow5FL3Ew",
+    durationText: "1:58",
+    metadataText: "31 views | 2 months ago",
+    watchUrl: "https://www.youtube.com/watch?v=JLph_KqMtWk",
   },
   {
-    videoId: "8xZIj70aQMU",
-    title: "Latest Gurukul Short 5",
-    thumbnailUrl: "https://i.ytimg.com/vi/8xZIj70aQMU/hqdefault.jpg",
-    durationText: null,
-    metadataText: "Published June 1, 2026",
-    watchUrl: "https://www.youtube.com/watch?v=8xZIj70aQMU",
+    videoId: "xN-G1eCTXmU",
+    title: "From Confusion to Confidence | Dilip Parmar’s Gurukul Journey | Student Review",
+    thumbnailUrl:
+      "https://i.ytimg.com/vi/xN-G1eCTXmU/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCCblJ9vNlu1xYze5Ye_xJYepZ3XA",
+    durationText: "4:04",
+    metadataText: "44 views | 2 months ago",
+    watchUrl: "https://www.youtube.com/watch?v=xN-G1eCTXmU",
   },
   {
-    videoId: "i5QwCFxrmLc",
-    title: "Latest Gurukul Short 6",
-    thumbnailUrl: "https://i.ytimg.com/vi/i5QwCFxrmLc/hqdefault.jpg",
-    durationText: null,
-    metadataText: "Published May 31, 2026",
-    watchUrl: "https://www.youtube.com/watch?v=i5QwCFxrmLc",
+    videoId: "KXwmxrO5pwg",
+    title:
+      "मोठ्या मुलाची प्रगती बघून धाकट्यासाठीही 'गुरुकुल सायन्स'चीच निवड! | Gurukul Science Classes.",
+    thumbnailUrl:
+      "https://i.ytimg.com/vi/KXwmxrO5pwg/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDxfAU2CwSK3mTKvVZdkyGZVWSMUg",
+    durationText: "3:20",
+    metadataText: "113 views | 3 months ago",
+    watchUrl: "https://www.youtube.com/watch?v=KXwmxrO5pwg",
   },
   {
-    videoId: "WZDXIk-aM04",
-    title: "Latest Gurukul Short 7",
-    thumbnailUrl: "https://i.ytimg.com/vi/WZDXIk-aM04/hqdefault.jpg",
-    durationText: null,
-    metadataText: "Published May 30, 2026",
-    watchUrl: "https://www.youtube.com/watch?v=WZDXIk-aM04",
+    videoId: "RVlsK8NmDmM",
+    title: "From Admission to Achievement | Gurukul Science Classes Story",
+    thumbnailUrl:
+      "https://i.ytimg.com/vi/RVlsK8NmDmM/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDeUO5S7pFkbVMx4k2wZEa65yVc2A",
+    durationText: "4:47",
+    metadataText: "101 views | 3 months ago",
+    watchUrl: "https://www.youtube.com/watch?v=RVlsK8NmDmM",
   },
   {
-    videoId: "WeHxvnW5FEc",
-    title: "Latest Gurukul Short 8",
-    thumbnailUrl: "https://i.ytimg.com/vi/WeHxvnW5FEc/hqdefault.jpg",
-    durationText: null,
-    metadataText: "Published May 29, 2026",
-    watchUrl: "https://www.youtube.com/watch?v=WeHxvnW5FEc",
+    videoId: "LLOdvivsGUM",
+    title:
+      "म्हणून गुरूकूलवर तुम्ही विश्वास ठेवला पाहिजे | ग्रीष्मा पाटीलचा प्रेरणादायी प्रवास | Parent Review",
+    thumbnailUrl:
+      "https://i.ytimg.com/vi/LLOdvivsGUM/hqdefault.jpg?sqp=-oaymwEjCNACELwBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDLl6A5JlrbFy1xfV8DysKnrWPixw",
+    durationText: "6:25",
+    metadataText: "140 views | 3 months ago",
+    watchUrl: "https://www.youtube.com/watch?v=LLOdvivsGUM",
   },
 ];
 
@@ -156,6 +167,8 @@ export function SocialEmbedModal({ platform, onSelectPlatform, onClose }: Social
   );
   const [youtubeLoading, setYoutubeLoading] = useState(false);
   const [youtubeError, setYoutubeError] = useState<string | null>(null);
+  const youtubeVideosTabUrl = `${SITE.socials.youtube}/videos`;
+  const youtubeUploadsApiPath = `/api/youtube/uploads?channelUrl=${encodeURIComponent(youtubeVideosTabUrl)}`;
 
   useEffect(() => {
     if (!platform) return;
@@ -199,26 +212,35 @@ export function SocialEmbedModal({ platform, onSelectPlatform, onClose }: Social
     }
 
     let cancelled = false;
+    setYoutubeUploads(DEFAULT_YOUTUBE_UPLOADS);
+    setActiveYoutubeVideoId(DEFAULT_YOUTUBE_UPLOADS[0]?.videoId ?? null);
     setYoutubeLoading(true);
     setYoutubeError(null);
 
-    safeFetchJson<YoutubeUpload[]>("/api/youtube/uploads")
+    fetchJson<YoutubeUpload[]>(youtubeUploadsApiPath)
       .then((records) => {
         if (cancelled) {
           return;
         }
 
-        const uploads = records || [];
+        const uploads = Array.isArray(records) ? records : [];
         if (uploads.length > 0) {
           setYoutubeUploads(uploads);
-          setActiveYoutubeVideoId((current) =>
-            uploads.some((item) => item.videoId === current)
-              ? current
-              : uploads[0]?.videoId || null,
-          );
+          setActiveYoutubeVideoId(uploads[0]?.videoId || null);
         } else {
+          setYoutubeUploads(DEFAULT_YOUTUBE_UPLOADS);
+          setActiveYoutubeVideoId(DEFAULT_YOUTUBE_UPLOADS[0]?.videoId ?? null);
           setYoutubeError("Showing featured uploads while the live feed is unavailable.");
         }
+      })
+      .catch(() => {
+        if (cancelled) {
+          return;
+        }
+
+        setYoutubeUploads(DEFAULT_YOUTUBE_UPLOADS);
+        setActiveYoutubeVideoId(DEFAULT_YOUTUBE_UPLOADS[0]?.videoId ?? null);
+        setYoutubeError("Showing featured uploads while the live feed is unavailable.");
       })
       .finally(() => {
         if (!cancelled) {
@@ -229,7 +251,7 @@ export function SocialEmbedModal({ platform, onSelectPlatform, onClose }: Social
     return () => {
       cancelled = true;
     };
-  }, [platform]);
+  }, [platform, youtubeUploadsApiPath]);
 
   if (!platform || typeof document === "undefined") return null;
 
@@ -239,8 +261,6 @@ export function SocialEmbedModal({ platform, onSelectPlatform, onClose }: Social
     youtubeUploads[0] ??
     DEFAULT_YOUTUBE_UPLOADS[0] ??
     null;
-  const youtubeVideosTabUrl = `${SITE.socials.youtube}/videos`;
-
   return createPortal(
     <div
       className="fixed inset-0 z-[80] bg-black/80 p-0"

@@ -1,11 +1,57 @@
 import { z } from "zod";
 import { heroSchema } from "../schemas/contentSchemas.js";
+import { heroSlides } from "../data/seedData.js";
 import { asOptionalString } from "../utils/normalize.js";
 import { publicUploadUrl } from "../utils/file.js";
 import { toHeroResponse } from "../utils/transformers.js";
 
 const heroIdSchema = z.coerce.number().int().positive();
 let ensureHeroTopperColumnPromise;
+
+async function maybeBackfillSeedHeroTopperText(pool) {
+  const [rows] = await pool.query(
+    "SELECT id, title, display_order, topper_text FROM hero_sections ORDER BY display_order ASC, id ASC",
+  );
+
+  const defaultTopperSlides = heroSlides.filter((slide) => slide.topperText?.trim());
+  if (defaultTopperSlides.length === 0) {
+    return;
+  }
+
+  const byDisplayOrder = new Map(
+    heroSlides.map((slide) => [slide.displayOrder, slide]),
+  );
+  const looksLikeSeedData =
+    rows.length === heroSlides.length &&
+    rows.every((row) => {
+      const seedSlide = byDisplayOrder.get(row.display_order);
+      return seedSlide && seedSlide.title === row.title;
+    });
+
+  if (!looksLikeSeedData) {
+    return;
+  }
+
+  const hasAnyTopperText = rows.some(
+    (row) => typeof row.topper_text === "string" && row.topper_text.trim(),
+  );
+  if (hasAnyTopperText) {
+    return;
+  }
+
+  for (const slide of defaultTopperSlides) {
+    await pool.query(
+      `
+        UPDATE hero_sections
+        SET topper_text = ?
+        WHERE display_order = ?
+          AND title = ?
+          AND topper_text IS NULL
+      `,
+      [slide.topperText, slide.displayOrder, slide.title],
+    );
+  }
+}
 
 async function ensureHeroTopperColumn(pool) {
   if (!ensureHeroTopperColumnPromise) {
@@ -20,11 +66,14 @@ async function ensureHeroTopperColumn(pool) {
         `,
       );
 
-      if (Number(rows?.[0]?.count || 0) === 0) {
+      const hasTopperColumn = Number(rows?.[0]?.count || 0) > 0;
+      if (!hasTopperColumn) {
         await pool.query(
           "ALTER TABLE hero_sections ADD COLUMN topper_text VARCHAR(160) NULL AFTER badge",
         );
       }
+
+      await maybeBackfillSeedHeroTopperText(pool);
     })().catch((error) => {
       ensureHeroTopperColumnPromise = null;
       throw error;
