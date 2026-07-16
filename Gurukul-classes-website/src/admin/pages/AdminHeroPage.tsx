@@ -59,30 +59,34 @@ interface HeroFormState {
   status: "active" | "inactive";
 }
 
-const EMPTY_FORM: HeroFormState = {
-  title: "",
-  subtitle: "",
-  description: "",
-  buttonText: "Enquire Now",
-  buttonLink: "#enquire",
-  badge: "",
-  topperText: "",
-  displayOrder: "0",
-  status: "active",
-};
+function createEmptyForm(defaultDisplayOrder: number): HeroFormState {
+  return {
+    title: "",
+    subtitle: "",
+    description: "",
+    buttonText: "Enquire Now",
+    buttonLink: "#enquire",
+    badge: "",
+    topperText: "",
+    displayOrder: String(defaultDisplayOrder),
+    status: "active",
+  };
+}
 
 function HeroEditorDialog({
   open,
   onOpenChange,
   item,
+  defaultDisplayOrder,
   onSubmit,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   item: HeroSectionRecord | null;
+  defaultDisplayOrder: number;
   onSubmit: (payload: FormData) => Promise<void>;
 }) {
-  const [form, setForm] = useState<HeroFormState>(EMPTY_FORM);
+  const [form, setForm] = useState<HeroFormState>(() => createEmptyForm(defaultDisplayOrder));
   const [file, setFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const objectUrl = useObjectUrl(file);
@@ -102,11 +106,11 @@ function HeroEditorDialog({
               displayOrder: String(item.displayOrder ?? 0),
               status: item.status,
             }
-          : EMPTY_FORM,
+          : createEmptyForm(defaultDisplayOrder),
       );
       setFile(null);
     }
-  }, [open, item]);
+  }, [open, item, defaultDisplayOrder]);
 
   const previewSrc = objectUrl || resolveAdminMediaUrl(item?.backgroundImage);
 
@@ -234,11 +238,17 @@ function HeroEditorDialog({
               <Input
                 id="hero-order"
                 type="number"
+                min={1}
+                step={1}
                 value={form.displayOrder}
                 onChange={(event) =>
                   setForm((prev) => ({ ...prev, displayOrder: event.target.value }))
                 }
+                required
               />
+              <p className="text-xs text-slate-500">
+                Insert at 2 and the later hero banners will move to 3, 4, 5 automatically.
+              </p>
             </div>
             <div className="space-y-2">
               <Label>Status</Label>
@@ -337,21 +347,24 @@ export function AdminHeroPage() {
     });
   }, [items, search, statusFilter]);
 
+  const nextDisplayOrder = useMemo(
+    () => items.reduce((max, item) => Math.max(max, item.displayOrder || 0), 0) + 1,
+    [items],
+  );
+
   async function saveHero(payload: FormData) {
-    const response = editingItem
-      ? await adminFetchFormData<HeroSectionRecord>(
-          `/api/admin/hero/${editingItem.id}`,
-          payload,
-          "PUT",
-        )
-      : await adminFetchFormData<HeroSectionRecord>("/api/admin/hero", payload, "POST");
+    if (editingItem) {
+      await adminFetchFormData<HeroSectionRecord>(
+        `/api/admin/hero/${editingItem.id}`,
+        payload,
+        "PUT",
+      );
+    } else {
+      await adminFetchFormData<HeroSectionRecord>("/api/admin/hero", payload, "POST");
+    }
+
     toast.success(editingItem ? "Hero banner updated" : "Hero banner added");
-    setItems((current) => {
-      const next = editingItem
-        ? current.map((item) => (item.id === response.id ? response : item))
-        : [response, ...current];
-      return next.sort((a, b) => a.displayOrder - b.displayOrder);
-    });
+    await loadItems();
   }
 
   async function quickToggle(item: HeroSectionRecord, nextStatus: "active" | "inactive") {
@@ -386,7 +399,7 @@ export function AdminHeroPage() {
     try {
       await deleteRecord(`/api/admin/hero/${deletingItem.id}`);
       toast.success("Hero banner deleted");
-      setItems((current) => current.filter((item) => item.id !== deletingItem.id));
+      await loadItems();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to delete hero banner");
     } finally {
@@ -442,6 +455,7 @@ export function AdminHeroPage() {
                 open={editorOpen}
                 onOpenChange={setEditorOpen}
                 item={editingItem}
+                defaultDisplayOrder={nextDisplayOrder}
                 onSubmit={saveHero}
               />
             </div>

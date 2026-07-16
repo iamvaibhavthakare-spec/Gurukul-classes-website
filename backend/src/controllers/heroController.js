@@ -98,9 +98,67 @@ function heroInsertPayload(data, backgroundImage) {
   };
 }
 
+async function getHeroSectionsForReorder(connection) {
+  const [rows] = await connection.query(
+    `
+      SELECT *
+      FROM hero_sections
+      ORDER BY display_order ASC, id ASC
+      FOR UPDATE
+    `,
+  );
+  return rows;
+}
+
+function resolveDisplayOrderIndex(displayOrder, itemCount) {
+  if (!Number.isFinite(displayOrder) || displayOrder < 1) {
+    return itemCount;
+  }
+
+  return Math.min(displayOrder - 1, itemCount);
+}
+
+async function rewriteHeroDisplayOrder(connection, orderedIds, currentRows) {
+  const currentDisplayOrderById = new Map(
+    currentRows.map((row) => [row.id, row.display_order]),
+  );
+
+  for (const [index, id] of orderedIds.entries()) {
+    const nextDisplayOrder = index + 1;
+    if (currentDisplayOrderById.get(id) === nextDisplayOrder) {
+      continue;
+    }
+
+    await connection.query("UPDATE hero_sections SET display_order = ? WHERE id = ?", [
+      nextDisplayOrder,
+      id,
+    ]);
+  }
+}
+
+async function normalizeHeroDisplayOrder(pool) {
+  const connection = await pool.getConnection();
+
+  try {
+    await connection.beginTransaction();
+
+    const orderedRows = await getHeroSectionsForReorder(connection);
+    const orderedIds = orderedRows.map((row) => row.id);
+    await rewriteHeroDisplayOrder(connection, orderedIds, orderedRows);
+
+    await connection.commit();
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
+}
+
 async function listHeroSections(req, res, includeInactive = false) {
   const pool = req.app.locals.pool;
   await ensureHeroTopperColumn(pool);
+  await normalizeHeroDisplayOrder(pool);
   const [rows] = await pool.query(
     includeInactive
       ? "SELECT * FROM hero_sections ORDER BY display_order ASC, id ASC"
@@ -141,11 +199,33 @@ export async function createHeroSection(req, res, next) {
 
     const pool = req.app.locals.pool;
     await ensureHeroTopperColumn(pool);
-    const payload = heroInsertPayload(parsed.data, publicUploadUrl(req.file.path));
-    const [result] = await pool.query("INSERT INTO hero_sections SET ?", [payload]);
-    const [rows] = await pool.query("SELECT * FROM hero_sections WHERE id = ?", [result.insertId]);
+    const connection = await pool.getConnection();
 
-    return res.status(201).json(toHeroResponse(rows[0]));
+    try {
+      await connection.beginTransaction();
+
+      const orderedRows = await getHeroSectionsForReorder(connection);
+      const payload = heroInsertPayload(parsed.data, publicUploadUrl(req.file.path));
+      const insertIndex = resolveDisplayOrderIndex(parsed.data.displayOrder, orderedRows.length);
+      const [result] = await connection.query("INSERT INTO hero_sections SET ?", [payload]);
+
+      const orderedIds = orderedRows.map((row) => row.id);
+      orderedIds.splice(insertIndex, 0, result.insertId);
+
+      await rewriteHeroDisplayOrder(connection, orderedIds, orderedRows);
+
+      const [rows] = await connection.query("SELECT * FROM hero_sections WHERE id = ?", [
+        result.insertId,
+      ]);
+
+      await connection.commit();
+      return res.status(201).json(toHeroResponse(rows[0]));
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
   } catch (error) {
     return next(error);
   }
@@ -164,21 +244,44 @@ export async function updateHeroSection(req, res, next) {
 
     const pool = req.app.locals.pool;
     await ensureHeroTopperColumn(pool);
-    const [existingRows] = await pool.query("SELECT * FROM hero_sections WHERE id = ? LIMIT 1", [heroId]);
-    const existing = existingRows[0];
-    if (!existing) {
-      return res.status(404).json({ message: "Hero banner not found." });
+    const connection = await pool.getConnection();
+
+    try {
+      await connection.beginTransaction();
+
+      const orderedRows = await getHeroSectionsForReorder(connection);
+      const existing = orderedRows.find((row) => row.id === heroId);
+      if (!existing) {
+        await connection.rollback();
+        return res.status(404).json({ message: "Hero banner not found." });
+      }
+
+      const backgroundImage = req.file
+        ? publicUploadUrl(req.file.path)
+        : asOptionalString(req.body.existingBackgroundImage) || existing.background_image;
+
+      const payload = heroInsertPayload(parsed.data, backgroundImage);
+      await connection.query("UPDATE hero_sections SET ? WHERE id = ?", [payload, heroId]);
+
+      const orderedIds = orderedRows
+        .filter((row) => row.id !== heroId)
+        .map((row) => row.id);
+      const insertIndex = resolveDisplayOrderIndex(parsed.data.displayOrder, orderedIds.length);
+
+      orderedIds.splice(insertIndex, 0, heroId);
+
+      await rewriteHeroDisplayOrder(connection, orderedIds, orderedRows);
+
+      const [rows] = await connection.query("SELECT * FROM hero_sections WHERE id = ?", [heroId]);
+
+      await connection.commit();
+      return res.json(toHeroResponse(rows[0]));
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
     }
-
-    const backgroundImage = req.file
-      ? publicUploadUrl(req.file.path)
-      : asOptionalString(req.body.existingBackgroundImage) || existing.background_image;
-
-    const payload = heroInsertPayload(parsed.data, backgroundImage);
-    await pool.query("UPDATE hero_sections SET ? WHERE id = ?", [payload, heroId]);
-
-    const [rows] = await pool.query("SELECT * FROM hero_sections WHERE id = ?", [heroId]);
-    return res.json(toHeroResponse(rows[0]));
   } catch (error) {
     return next(error);
   }
@@ -188,13 +291,34 @@ export async function deleteHeroSection(req, res, next) {
   try {
     const heroId = heroIdSchema.parse(req.params.id);
     const pool = req.app.locals.pool;
-    const [result] = await pool.query("DELETE FROM hero_sections WHERE id = ?", [heroId]);
+    const connection = await pool.getConnection();
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Hero banner not found." });
+    try {
+      await connection.beginTransaction();
+
+      const orderedRows = await getHeroSectionsForReorder(connection);
+      const existing = orderedRows.find((row) => row.id === heroId);
+      if (!existing) {
+        await connection.rollback();
+        return res.status(404).json({ message: "Hero banner not found." });
+      }
+
+      await connection.query("DELETE FROM hero_sections WHERE id = ?", [heroId]);
+
+      const orderedIds = orderedRows
+        .filter((row) => row.id !== heroId)
+        .map((row) => row.id);
+
+      await rewriteHeroDisplayOrder(connection, orderedIds, orderedRows);
+      await connection.commit();
+
+      return res.json({ message: "Hero banner deleted successfully." });
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
     }
-
-    return res.json({ message: "Hero banner deleted successfully." });
   } catch (error) {
     return next(error);
   }
