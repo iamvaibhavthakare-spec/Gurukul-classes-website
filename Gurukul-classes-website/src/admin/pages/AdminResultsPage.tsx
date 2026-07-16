@@ -58,29 +58,33 @@ interface ResultFormState {
   status: "active" | "inactive";
 }
 
-const EMPTY_FORM: ResultFormState = {
-  studentName: "",
-  examType: "NEET",
-  examLabel: "",
-  resultValue: "",
-  year: new Date().getFullYear().toString(),
-  description: "",
-  displayOrder: "0",
-  status: "active",
-};
+function createEmptyForm(defaultDisplayOrder: number): ResultFormState {
+  return {
+    studentName: "",
+    examType: "NEET",
+    examLabel: "",
+    resultValue: "",
+    year: new Date().getFullYear().toString(),
+    description: "",
+    displayOrder: String(defaultDisplayOrder),
+    status: "active",
+  };
+}
 
 function ResultEditorDialog({
   open,
   onOpenChange,
   item,
+  defaultDisplayOrder,
   onSubmit,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   item: ResultRecord | null;
+  defaultDisplayOrder: number;
   onSubmit: (payload: FormData) => Promise<void>;
 }) {
-  const [form, setForm] = useState<ResultFormState>(EMPTY_FORM);
+  const [form, setForm] = useState<ResultFormState>(() => createEmptyForm(defaultDisplayOrder));
   const [file, setFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const objectUrl = useObjectUrl(file);
@@ -99,11 +103,11 @@ function ResultEditorDialog({
               displayOrder: String(item.displayOrder ?? 0),
               status: item.status,
             }
-          : EMPTY_FORM,
+          : createEmptyForm(defaultDisplayOrder),
       );
       setFile(null);
     }
-  }, [open, item]);
+  }, [open, item, defaultDisplayOrder]);
 
   const previewSrc = objectUrl || resolveAdminMediaUrl(item?.studentPhoto);
 
@@ -222,11 +226,17 @@ function ResultEditorDialog({
               <Input
                 id="result-order"
                 type="number"
+                min={1}
+                step={1}
                 value={form.displayOrder}
                 onChange={(event) =>
                   setForm((prev) => ({ ...prev, displayOrder: event.target.value }))
                 }
+                required
               />
+              <p className="text-xs text-slate-500">
+                Insert at 3 and the later results will move to 4, 5, 6 automatically.
+              </p>
             </div>
             <div className="space-y-2">
               <Label>Status</Label>
@@ -331,21 +341,24 @@ export function AdminResultsPage() {
     });
   }, [items, search, statusFilter]);
 
+  const nextDisplayOrder = useMemo(
+    () => items.reduce((max, item) => Math.max(max, item.displayOrder || 0), 0) + 1,
+    [items],
+  );
+
   async function saveResult(payload: FormData) {
-    const response = editingItem
-      ? await adminFetchFormData<ResultRecord>(
-          `/api/admin/results/${editingItem.id}`,
-          payload,
-          "PUT",
-        )
-      : await adminFetchFormData<ResultRecord>("/api/admin/results", payload, "POST");
+    if (editingItem) {
+      await adminFetchFormData<ResultRecord>(
+        `/api/admin/results/${editingItem.id}`,
+        payload,
+        "PUT",
+      );
+    } else {
+      await adminFetchFormData<ResultRecord>("/api/admin/results", payload, "POST");
+    }
+
     toast.success(editingItem ? "Result updated" : "Result added");
-    setItems((current) => {
-      const next = editingItem
-        ? current.map((item) => (item.id === response.id ? response : item))
-        : [response, ...current];
-      return next.sort((a, b) => a.displayOrder - b.displayOrder);
-    });
+    await loadItems();
   }
 
   async function quickToggle(item: ResultRecord, nextStatus: "active" | "inactive") {
@@ -376,7 +389,7 @@ export function AdminResultsPage() {
     if (!deletingItem) return;
     try {
       await deleteRecord(`/api/admin/results/${deletingItem.id}`);
-      setItems((current) => current.filter((row) => row.id !== deletingItem.id));
+      await loadItems();
       toast.success("Result deleted");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to delete result");
@@ -534,6 +547,7 @@ export function AdminResultsPage() {
           open={editorOpen}
           onOpenChange={setEditorOpen}
           item={editingItem}
+          defaultDisplayOrder={nextDisplayOrder}
           onSubmit={saveResult}
         />
 

@@ -20,6 +20,44 @@ function resultInsertPayload(data, studentPhoto) {
   };
 }
 
+async function getResultsForReorder(connection) {
+  const [rows] = await connection.query(
+    `
+      SELECT *
+      FROM results
+      ORDER BY display_order ASC, year DESC, id ASC
+      FOR UPDATE
+    `,
+  );
+  return rows;
+}
+
+function resolveDisplayOrderIndex(displayOrder, itemCount) {
+  if (!Number.isFinite(displayOrder) || displayOrder < 1) {
+    return itemCount;
+  }
+
+  return Math.min(displayOrder - 1, itemCount);
+}
+
+async function rewriteDisplayOrder(connection, orderedIds, currentRows) {
+  const currentDisplayOrderById = new Map(
+    currentRows.map((row) => [row.id, row.display_order]),
+  );
+
+  for (const [index, id] of orderedIds.entries()) {
+    const nextDisplayOrder = index + 1;
+    if (currentDisplayOrderById.get(id) === nextDisplayOrder) {
+      continue;
+    }
+
+    await connection.query("UPDATE results SET display_order = ? WHERE id = ?", [
+      nextDisplayOrder,
+      id,
+    ]);
+  }
+}
+
 async function listResults(req, res, includeInactive = false) {
   const pool = req.app.locals.pool;
   const [rows] = await pool.query(
@@ -61,10 +99,33 @@ export async function createResult(req, res, next) {
     }
 
     const pool = req.app.locals.pool;
-    const payload = resultInsertPayload(parsed.data, publicUploadUrl(req.file.path));
-    const [result] = await pool.query("INSERT INTO results SET ?", [payload]);
-    const [rows] = await pool.query("SELECT * FROM results WHERE id = ?", [result.insertId]);
-    return res.status(201).json(toResultResponse(rows[0]));
+    const connection = await pool.getConnection();
+
+    try {
+      await connection.beginTransaction();
+
+      const orderedRows = await getResultsForReorder(connection);
+      const payload = resultInsertPayload(parsed.data, publicUploadUrl(req.file.path));
+      const insertIndex = resolveDisplayOrderIndex(parsed.data.displayOrder, orderedRows.length);
+      const [result] = await connection.query("INSERT INTO results SET ?", [payload]);
+
+      const orderedIds = orderedRows.map((row) => row.id);
+      orderedIds.splice(insertIndex, 0, result.insertId);
+
+      await rewriteDisplayOrder(connection, orderedIds, orderedRows);
+
+      const [rows] = await connection.query("SELECT * FROM results WHERE id = ?", [
+        result.insertId,
+      ]);
+
+      await connection.commit();
+      return res.status(201).json(toResultResponse(rows[0]));
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
   } catch (error) {
     return next(error);
   }
@@ -82,21 +143,44 @@ export async function updateResult(req, res, next) {
     }
 
     const pool = req.app.locals.pool;
-    const [existingRows] = await pool.query("SELECT * FROM results WHERE id = ? LIMIT 1", [resultId]);
-    const existing = existingRows[0];
-    if (!existing) {
-      return res.status(404).json({ message: "Result not found." });
+    const connection = await pool.getConnection();
+
+    try {
+      await connection.beginTransaction();
+
+      const orderedRows = await getResultsForReorder(connection);
+      const existing = orderedRows.find((row) => row.id === resultId);
+      if (!existing) {
+        await connection.rollback();
+        return res.status(404).json({ message: "Result not found." });
+      }
+
+      const studentPhoto = req.file
+        ? publicUploadUrl(req.file.path)
+        : asOptionalString(req.body.existingStudentPhoto) || existing.student_photo;
+
+      const payload = resultInsertPayload(parsed.data, studentPhoto);
+      await connection.query("UPDATE results SET ? WHERE id = ?", [payload, resultId]);
+
+      const orderedIds = orderedRows
+        .filter((row) => row.id !== resultId)
+        .map((row) => row.id);
+      const insertIndex = resolveDisplayOrderIndex(parsed.data.displayOrder, orderedIds.length);
+
+      orderedIds.splice(insertIndex, 0, resultId);
+
+      await rewriteDisplayOrder(connection, orderedIds, orderedRows);
+
+      const [rows] = await connection.query("SELECT * FROM results WHERE id = ?", [resultId]);
+
+      await connection.commit();
+      return res.json(toResultResponse(rows[0]));
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
     }
-
-    const studentPhoto = req.file
-      ? publicUploadUrl(req.file.path)
-      : asOptionalString(req.body.existingStudentPhoto) || existing.student_photo;
-
-    const payload = resultInsertPayload(parsed.data, studentPhoto);
-    await pool.query("UPDATE results SET ? WHERE id = ?", [payload, resultId]);
-
-    const [rows] = await pool.query("SELECT * FROM results WHERE id = ?", [resultId]);
-    return res.json(toResultResponse(rows[0]));
   } catch (error) {
     return next(error);
   }
@@ -106,13 +190,34 @@ export async function deleteResult(req, res, next) {
   try {
     const resultId = resultIdSchema.parse(req.params.id);
     const pool = req.app.locals.pool;
-    const [result] = await pool.query("DELETE FROM results WHERE id = ?", [resultId]);
+    const connection = await pool.getConnection();
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Result not found." });
+    try {
+      await connection.beginTransaction();
+
+      const orderedRows = await getResultsForReorder(connection);
+      const existing = orderedRows.find((row) => row.id === resultId);
+      if (!existing) {
+        await connection.rollback();
+        return res.status(404).json({ message: "Result not found." });
+      }
+
+      await connection.query("DELETE FROM results WHERE id = ?", [resultId]);
+
+      const orderedIds = orderedRows
+        .filter((row) => row.id !== resultId)
+        .map((row) => row.id);
+
+      await rewriteDisplayOrder(connection, orderedIds, orderedRows);
+      await connection.commit();
+
+      return res.json({ message: "Result deleted successfully." });
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
     }
-
-    return res.json({ message: "Result deleted successfully." });
   } catch (error) {
     return next(error);
   }
